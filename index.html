@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Breadboard</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <script type="text/javascript" src="libs/jquery-latest.min.js"></script>
+    <script type="text/javascript" src="sparks.breadboard.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="sparks.breadboard.css">
+  </head>
+  <body style="margin: 0px; padding: 0px;">
+    <div id="container" style="width: 800px; height: 500px;">
+      <script type="text/javascript">
+        var loading = setInterval(function() {
+          if(breadboard.ready) {
+            clearInterval(loading);
+            create_board();
+          };
+        }, 100);
+        var create_board = function() {
+
+          var circuit = breadboard.create("container");
+          circuit.addComponent({
+            "type" : "wire",
+            "UID" : "w1",
+            "connections" : "a22,f25",
+            "label" : "W1"
+          });
+          circuit.addWire({
+            "UID" : "w2",
+            "connections" : "d5,d10",
+            "label" : "W2"
+          });
+
+        };
+
+      </script>
+    </div>
+  </body>
+</html>
