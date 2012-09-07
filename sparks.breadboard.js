@@ -105,7 +105,6 @@ window["breadboard"] = {
 (function($, board) {
 
   // global link to common SVG-jQuery object
-  var widget = null;
   var paper = null;
 
   // global event model
@@ -117,155 +116,195 @@ window["breadboard"] = {
   var _mouseover = (touch ) ? 'xxx' : 'mouseover';
   var _mouseout = (touch ) ? 'xxx' : 'mouseout';
 
-  // board constructor
+  // object contains components added to breadboard
+  var component = {};
 
+  // parts of more complex components on breadboard(need only for building)
+  var primitive = {};
+
+  // board constructor
   var CircuitBoard = function(id) {
+
+    var self = this;
+
     // link to main holder
     this.holder = $('#' + id).html('').append(paper).addClass('circuit-board');
-    this.inner = {};
 
-    var inner = this.inner;
-    inner.workspace = $("[item=components]");
-    inner.lead = inner.workspace.find("[component=lead]");
-    inner.line = inner.workspace.find("[component=line]");
-    inner.holes = [];
+    this.workspace = this.holder.find("[item=components]");
+    this.holes = [];
+    this.component = {};
 
     this.holder.find("[hole]").each(function() {
-      inner.holes[$(this).attr("hole")] = new CircuitBoardHole($(this));
+      self.holes[$(this).attr("hole")] = new CircuitBoardHole($(this));
     });
   };
 
-  CircuitBoard.prototype.addComponent = function(component) {
-    var type = component["type"].charAt(0).toUpperCase() + component["type"].substring(1);
-
-    this["add" + type](component);
+  CircuitBoard.prototype.addComponent = function(elem) {
+    this.component[elem["UID"]] = new component[ elem["type"] ](elem, this.holes);
+    this.workspace.append(this.component[elem["UID"]].view);
   };
 
-  CircuitBoard.prototype.addWire = function(params) {
+  CircuitBoard.prototype.removeComponent = function(id) {
+    this.component[id].hole[0].disconnected();
+    this.component[id].hole[1].disconnected();
+    this.component[id].view.remove();
+    this.component[id] = null;
+
+  };
+  // holes constructor
+  var CircuitBoardHole = function(elem) {
+    this.x = parseInt(elem.attr("transform").match(/(-?\d+\.\d+)|-?\d+/g)[4], 10);
+    this.y = parseInt(elem.attr("transform").match(/(-?\d+\.\d+)|-?\d+/g)[5], 10);
+    this.view = elem;
+    if(elem.attr("xlink:href") == "#$:hole_connected") {
+      this.num = 1;
+    } else {
+      this.num = 0;
+    }
+  };
+
+  CircuitBoardHole.prototype.connected = function() {
+    this.num++;
+    this.view.attr("xlink:href", "#$:hole_connected");
+  };
+
+  CircuitBoardHole.prototype.disconnected = function() {
+    if(--this.num === 0) {
+      this.view.attr("xlink:href", "#$:hole_not_connected");
+    }
+  };
+  /* === #componets begin === */
+
+  component.wire = function(params, holes) {
+
     var loc = params["connections"].split(',');
 
-    var p1 = this.inner.holes[loc[0]], p2 = this.inner.holes[loc[1]];
-
-    var leadLeft = new CircuitBoardLead(this.holder, 'left', {
-      x : p2.x,
-      y : p2.y
-    });
-    var leadRight = new CircuitBoardLead(this.holder, 'right', {
-      x : p1.x,
-      y : p1.y
-    });
-
+    var p1 = holes[loc[0]], p2 = holes[loc[1]];
+    var color = params.properties["color"] || "rgb(173,1,1)";
     var angle = (180 / Math.PI) * Math.atan2((p2.y - p1.y), (p2.x - p1.x));
 
-    leadRight.attr("transform", "matrix(1 0 0 1 " + p1.x + " " + p1.y + ") rotate(" + (180 + angle) + ",130,130)");
-    this.inner.workspace.append(leadRight);
+    this.view = SVGStorage.create('group').attr({
+      'component' : 'wire',
+      'uid' : params['UID']
+    });
+    this.lead = [];
+    this.lead[0] = new primitive.lead('right', {
+      x : p1.x,
+      y : p1.y
+    }, angle);
+    this.lead[1] = new primitive.lead('left', {
+      x : p2.x,
+      y : p2.y
+    }, angle);
+    this.wire = new primitive.line(p1, p2, angle * (Math.PI / 180), color);
 
-    leadLeft.attr("transform", "matrix(1 0 0 1 " + p2.x + " " + p2.y + ") rotate(" + (180 + angle) + ",100,130)");
-    this.inner.workspace.append(leadLeft);
+    this.view.append(this.lead[0].view, this.lead[1].view, this.wire.view);
 
+    this.hole = [];
+    this.hole[0] = p1;
+    this.hole[1] = p2;
+
+    p1.connected();
+    p2.connected();
+
+  };
+
+  component.wire.prototype = {
+    'move' : null,
+    'color' : null
+  };
+
+  /* === #componets end === */
+
+  /* === #primitive begin === */
+
+  primitive.line = function(p1, p2, angle, color) {
+    var line = SVGStorage.create('line').clone();
     var dl = 120, corr = 600;
-    angle = angle * (Math.PI / 180);
-    var line = this.inner.line.clone();
     line.attr({
       "x1" : p1.x + dl + corr * Math.cos(angle),
       "y1" : p1.y + dl + corr * Math.sin(angle),
       "x2" : p2.x + dl - corr * Math.cos(angle),
       "y2" : p2.y + dl - corr * Math.sin(angle)
     });
-    line.attr("stroke", "rgb(173,1,1)");
-    this.inner.workspace.append(line);
-
-    p1.connected();
-    p2.connected();
+    line.attr("stroke", color);
+    this.view = line;
   };
 
-  CircuitBoard.prototype.addResistor = function(params) {
-
-  };
-  var CircuitBoardHole = function(elem) {
-    this.x = parseInt(elem.attr("transform").match(/(-?\d+\.\d+)|-?\d+/g)[4], 10);
-    this.y = parseInt(elem.attr("transform").match(/(-?\d+\.\d+)|-?\d+/g)[5], 10);
-    this.view = elem;
-  };
-
-  CircuitBoardHole.prototype.connected = function() {
-    this.view.attr("xlink:href", "#$:hole_connected");
-  };
-
-  CircuitBoardHole.prototype.disconnected = function() {
-    this.view.attr("xlink:href", "#$:hole_not_connected");
-  };
-  var CircuitBoardLead = function(elem, type, pos) {
-    this.view = elem.find('defs[info="patterns"] > [id="$:#:lead"]').clone();
-    this.view_d = this.view.find('[type="disconnected"]').hide();
-    this.view_c = this.view.find('[type="connected"]').show();
+  primitive.lead = function(type, pos, angle) {
+    var lead = SVGStorage.create('lead').clone();
+    this.view_d = lead.find('[type="disconnected"]').hide();
+    this.view_c = lead.find('[type="connected"]').show();
 
     // set the right direction
-    this.view.find('[type="orientation"]').attr({
+    lead.find('[type="orientation"]').attr({
       "transform" : 'matrix(' + ((type == 'left') ? 1 : -1) + ' 0 0 1 0 0)'
     });
 
     // set the position
-    this.view.attr({
-      "transform" : 'matrix(1 0 0 1 ' + pos.x + ' ' + pos.y + ')'
-    });
+    if(type == 'left') {
+      lead.attr("transform", "matrix(1 0 0 1 " + pos.x + " " + pos.y + ") rotate(" + (180 + angle) + ",100,130)");
+    } else {
+      lead.attr("transform", "matrix(1 0 0 1 " + pos.x + " " + pos.y + ") rotate(" + (180 + angle) + ",130,130)");
+    }
 
+    var arrow = lead.find('.arrow').hide();
     // bind hover events
+    var action = lead.find("[type=action]");
     if(!touch) {
-      var arrow = this.view.find('.arrow').hide();
-      this.view.bind('mouseover', function() {
+      action.bind('mouseover', function() {
         arrow.show();
       });
-      this.view.bind('mouseout', function() {
+      action.bind('mouseout', function() {
         arrow.hide();
       });
     }
 
     // bind onclick events
-    this.view[0].addEventListener(_mouseup, function(lead) {
+    action[0].addEventListener(_mouseup, function(l) {
       var f = false;
       return function() {
-        lead[ (f = !f) ? 'disconnect' : 'connect' ]();
+        l[ (f = !f) ? 'disconnect' : 'connect' ]();
       };
     }(this), false);
 
-    return this.view;
+    this.view = lead;
   };
 
-  CircuitBoardLead.prototype.connect = function(elem) {
+  primitive.lead.prototype.connect = function() {
     this.view_d.hide();
     this.view_c.show();
   };
 
-  CircuitBoardLead.prototype.disconnect = function(elem) {
+  primitive.lead.prototype.disconnect = function() {
     this.view_c.hide();
     this.view_d.show();
   };
-  /*SVGController.prototype.create = function( name ) {
-   return this.element[ name ].clone().removeAttr('id');
-   };*/
+  /* === #primitive end === */
 
-  /*var create_svg_element = function() {
-   var element = {};
-   this.paper.find('g[id^="$:#:"]').each(function() {
-   var elem = $(this), name = elem.attr('id').replace(/\$:#:/g, '');
-   element[ name ] = elem;
-   })
-   };*/
+  var SVGStorage = function(data) {
+    var self = this;
 
-  /*var build_view = function( id ) {
-   if ( (navigator.vendor + '').toLowerCase().indexOf('apple') > -1 ) {
-   return $('#'+ id).each(function() {
-   this.innerHTML = paper;
-   }).addClass('circuit-board');
-   } else {
-   return $('#'+ id).html(  paper ).addClass('circuit-board');
-   }
-   };*/
+    this.view = {
+      'board' : data
+    };
+    data.find('[primitive]').each(function() {
+      var elem = $(this), name = elem.attr('primitive');
+      elem.removeAttr('primitive');
+      self.view[name] = elem.remove();
+    });
+  };
+
+  SVGStorage.prototype.create = function(name) {
+    return this.view[name].clone();
+  };
 
   board.util.require(["sparks.breadboard.svg"], function(data) {
-    //widget = new SVGController( data["sparks.breadboard"] );
     paper = $(data["sparks.breadboard"]);
+
+    //constructor is no longer needed
+    SVGStorage = new SVGStorage(paper);
+
     board.ready = true;
   });
 

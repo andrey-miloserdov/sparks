@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<svg style="width: 800px; height: 500px; " width="800" height="500" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg style="width: 800px; height: 500px;" width="800" height="500" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <g transform="matrix(1 0 0 1 0 60)">
     <use xlink:href="#:0" transform="matrix(0.240 0 0 0.337 0 0)"/>
   </g>
@@ -145,56 +145,56 @@
       </g>
     </g>
     <g info="holes">
-      <use hole="top_positive1" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14700 5400)"/>
-      <use hole="top_positive2" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14300 5400)"/>
-      <use hole="top_positive3" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13900 5400)"/>
-      <use hole="top_positive4" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13500 5400)"/>
-      <use hole="top_positive5" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13100 5400)"/>
-      <use hole="top_positive6" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 12300 5400)"/>
-      <use hole="top_positive7" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11900 5400)"/>
-      <use hole="top_positive8" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11500 5400)"/>
-      <use hole="top_positive9" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11100 5400)"/>
-      <use hole="top_positive10" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 10700 5400)"/>
-      <use hole="top_positive11" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9900 5400)"/>
-      <use hole="top_positive12" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9500 5400)"/>
-      <use hole="top_positive13" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9100 5400)"/>
-      <use hole="top_positive14" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8700 5400)"/>
-      <use hole="top_positive15" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8300 5400)"/>
-      <use hole="top_positive16" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7500 5400)"/>
-      <use hole="top_positive17" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7100 5400)"/>
-      <use hole="top_positive18" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6700 5400)"/>
-      <use hole="top_positive19" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6300 5400)"/>
-      <use hole="top_positive20" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 5900 5400)"/>
-      <use hole="top_positive21" xlink:href="#$:hole_connected" transform="matrix(1 0 0 1 5100 5400)"/>
-      <use hole="top_positive22" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4700 5400)"/>
-      <use hole="top_positive23" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4300 5400)"/>
-      <use hole="top_positive24" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3900 5400)"/>
-      <use hole="top_positive25" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3500 5400)"/>
-      <use hole="top_negative1" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14700 5800)"/>
-      <use hole="top_negative2" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14300 5800)"/>
-      <use hole="top_negative3" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13900 5800)"/>
-      <use hole="top_negative4" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13500 5800)"/>
-      <use hole="top_negative5" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13100 5800)"/>
-      <use hole="top_negative6" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 12300 5800)"/>
-      <use hole="top_negative7" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11900 5800)"/>
-      <use hole="top_negative8" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11500 5800)"/>
-      <use hole="top_negative9" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11100 5800)"/>
-      <use hole="top_negative10" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 10700 5800)"/>
-      <use hole="top_negative11" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9900 5800)"/>
-      <use hole="top_negative12" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9500 5800)"/>
-      <use hole="top_negative13" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9100 5800)"/>
-      <use hole="top_negative14" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8700 5800)"/>
-      <use hole="top_negative15" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8300 5800)"/>
-      <use hole="top_negative16" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7500 5800)"/>
-      <use hole="top_negative17" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7100 5800)"/>
-      <use hole="top_negative18" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6700 5800)"/>
-      <use hole="top_negative19" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6300 5800)"/>
-      <use hole="top_negative20" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 5900 5800)"/>
-      <use hole="top_negative21" xlink:href="#$:hole_connected" transform="matrix(1 0 0 1 5100 5800)"/>
-      <use hole="top_negative22" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4700 5800)"/>
-      <use hole="top_negative23" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4300 5800)"/>
-      <use hole="top_negative24" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3900 5800)"/>
-      <use hole="top_negative25" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3500 5800)"/>
+      <use hole="left_positive1" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14700 5400)"/>
+      <use hole="left_positive2" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14300 5400)"/>
+      <use hole="left_positive3" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13900 5400)"/>
+      <use hole="left_positive4" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13500 5400)"/>
+      <use hole="left_positive5" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13100 5400)"/>
+      <use hole="left_positive6" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 12300 5400)"/>
+      <use hole="left_positive7" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11900 5400)"/>
+      <use hole="left_positive8" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11500 5400)"/>
+      <use hole="left_positive9" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11100 5400)"/>
+      <use hole="left_positive10" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 10700 5400)"/>
+      <use hole="left_positive11" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9900 5400)"/>
+      <use hole="left_positive12" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9500 5400)"/>
+      <use hole="left_positive13" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9100 5400)"/>
+      <use hole="left_positive14" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8700 5400)"/>
+      <use hole="left_positive15" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8300 5400)"/>
+      <use hole="left_positive16" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7500 5400)"/>
+      <use hole="left_positive17" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7100 5400)"/>
+      <use hole="left_positive18" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6700 5400)"/>
+      <use hole="left_positive19" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6300 5400)"/>
+      <use hole="left_positive20" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 5900 5400)"/>
+      <use hole="left_positive21" xlink:href="#$:hole_connected" transform="matrix(1 0 0 1 5100 5400)"/>
+      <use hole="left_positive22" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4700 5400)"/>
+      <use hole="left_positive23" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4300 5400)"/>
+      <use hole="left_positive24" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3900 5400)"/>
+      <use hole="left_positive25" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3500 5400)"/>
+      <use hole="left_negative1" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14700 5800)"/>
+      <use hole="left_negative2" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14300 5800)"/>
+      <use hole="left_negative3" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13900 5800)"/>
+      <use hole="left_negative4" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13500 5800)"/>
+      <use hole="left_negative5" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13100 5800)"/>
+      <use hole="left_negative6" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 12300 5800)"/>
+      <use hole="left_negative7" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11900 5800)"/>
+      <use hole="left_negative8" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11500 5800)"/>
+      <use hole="left_negative9" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11100 5800)"/>
+      <use hole="left_negative10" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 10700 5800)"/>
+      <use hole="left_negative11" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9900 5800)"/>
+      <use hole="left_negative12" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9500 5800)"/>
+      <use hole="left_negative13" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9100 5800)"/>
+      <use hole="left_negative14" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8700 5800)"/>
+      <use hole="left_negative15" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8300 5800)"/>
+      <use hole="left_negative16" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7500 5800)"/>
+      <use hole="left_negative17" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7100 5800)"/>
+      <use hole="left_negative18" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6700 5800)"/>
+      <use hole="left_negative19" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6300 5800)"/>
+      <use hole="left_negative20" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 5900 5800)"/>
+      <use hole="left_negative21" xlink:href="#$:hole_connected" transform="matrix(1 0 0 1 5100 5800)"/>
+      <use hole="left_negative22" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4700 5800)"/>
+      <use hole="left_negative23" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4300 5800)"/>
+      <use hole="left_negative24" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3900 5800)"/>
+      <use hole="left_negative25" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3500 5800)"/>
       <use hole="a1" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14900 6800)"/>
       <use hole="a2" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14500 6800)"/>
       <use hole="a3" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14100 6800)"/>
@@ -495,61 +495,58 @@
       <use hole="j28" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4100 11200)"/>
       <use hole="j29" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3700 11200)"/>
       <use hole="j30" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3300 11200)"/>
-      <use hole="bottom_positive1" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14700 12200)"/>
-      <use hole="bottom_positive2" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14300 12200)"/>
-      <use hole="bottom_positive3" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13900 12200)"/>
-      <use hole="bottom_positive4" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13500 12200)"/>
-      <use hole="bottom_positive5" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13100 12200)"/>
-      <use hole="bottom_positive6" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 12300 12200)"/>
-      <use hole="bottom_positive7" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11900 12200)"/>
-      <use hole="bottom_positive8" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11500 12200)"/>
-      <use hole="bottom_positive9" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11100 12200)"/>
-      <use hole="bottom_positive10" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 10700 12200)"/>
-      <use hole="bottom_positive11" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9900 12200)"/>
-      <use hole="bottom_positive12" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9500 12200)"/>
-      <use hole="bottom_positive13" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9100 12200)"/>
-      <use hole="bottom_positive14" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8700 12200)"/>
-      <use hole="bottom_positive15" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8300 12200)"/>
-      <use hole="bottom_positive16" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7500 12200)"/>
-      <use hole="bottom_positive17" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7100 12200)"/>
-      <use hole="bottom_positive18" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6700 12200)"/>
-      <use hole="bottom_positive19" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6300 12200)"/>
-      <use hole="bottom_positive20" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 5900 12200)"/>
-      <use hole="bottom_positive21" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 5100 12200)"/>
-      <use hole="bottom_positive22" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4700 12200)"/>
-      <use hole="bottom_positive23" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4300 12200)"/>
-      <use hole="bottom_positive24" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3900 12200)"/>
-      <use hole="bottom_positive25" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3500 12200)"/>
-      <use hole="bottom_negative1" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14700 12600)"/>
-      <use hole="bottom_negative2" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14300 12600)"/>
-      <use hole="bottom_negative3" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13900 12600)"/>
-      <use hole="bottom_negative4" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13500 12600)"/>
-      <use hole="bottom_negative5" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13100 12600)"/>
-      <use hole="bottom_negative6" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 12300 12600)"/>
-      <use hole="bottom_negative7" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11900 12600)"/>
-      <use hole="bottom_negative8" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11500 12600)"/>
-      <use hole="bottom_negative9" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11100 12600)"/>
-      <use hole="bottom_negative10" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 10700 12600)"/>
-      <use hole="bottom_negative11" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9900 12600)"/>
-      <use hole="bottom_negative12" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9500 12600)"/>
-      <use hole="bottom_negative13" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9100 12600)"/>
-      <use hole="bottom_negative14" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8700 12600)"/>
-      <use hole="bottom_negative15" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8300 12600)"/>
-      <use hole="bottom_negative16" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7500 12600)"/>
-      <use hole="bottom_negative17" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7100 12600)"/>
-      <use hole="bottom_negative18" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6700 12600)"/>
-      <use hole="bottom_negative19" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6300 12600)"/>
-      <use hole="bottom_negative20" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 5900 12600)"/>
-      <use hole="bottom_negative21" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 5100 12600)"/>
-      <use hole="bottom_negative22" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4700 12600)"/>
-      <use hole="bottom_negative23" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4300 12600)"/>
-      <use hole="bottom_negative24" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3900 12600)"/>
-      <use hole="bottom_negative25" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3500 12600)"/>
+      <use hole="right_positive1" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14700 12200)"/>
+      <use hole="right_positive2" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14300 12200)"/>
+      <use hole="right_positive3" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13900 12200)"/>
+      <use hole="right_positive4" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13500 12200)"/>
+      <use hole="right_positive5" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13100 12200)"/>
+      <use hole="right_positive6" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 12300 12200)"/>
+      <use hole="right_positive7" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11900 12200)"/>
+      <use hole="right_positive8" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11500 12200)"/>
+      <use hole="right_positive9" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11100 12200)"/>
+      <use hole="right_positive10" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 10700 12200)"/>
+      <use hole="right_positive11" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9900 12200)"/>
+      <use hole="right_positive12" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9500 12200)"/>
+      <use hole="right_positive13" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9100 12200)"/>
+      <use hole="right_positive14" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8700 12200)"/>
+      <use hole="right_positive15" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8300 12200)"/>
+      <use hole="right_positive16" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7500 12200)"/>
+      <use hole="right_positive17" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7100 12200)"/>
+      <use hole="right_positive18" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6700 12200)"/>
+      <use hole="right_positive19" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6300 12200)"/>
+      <use hole="right_positive20" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 5900 12200)"/>
+      <use hole="right_positive21" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 5100 12200)"/>
+      <use hole="right_positive22" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4700 12200)"/>
+      <use hole="right_positive23" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4300 12200)"/>
+      <use hole="right_positive24" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3900 12200)"/>
+      <use hole="right_positive25" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3500 12200)"/>
+      <use hole="right_negative1" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14700 12600)"/>
+      <use hole="right_negative2" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 14300 12600)"/>
+      <use hole="right_negative3" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13900 12600)"/>
+      <use hole="right_negative4" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13500 12600)"/>
+      <use hole="right_negative5" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 13100 12600)"/>
+      <use hole="right_negative6" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 12300 12600)"/>
+      <use hole="right_negative7" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11900 12600)"/>
+      <use hole="right_negative8" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11500 12600)"/>
+      <use hole="right_negative9" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 11100 12600)"/>
+      <use hole="right_negative10" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 10700 12600)"/>
+      <use hole="right_negative11" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9900 12600)"/>
+      <use hole="right_negative12" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9500 12600)"/>
+      <use hole="right_negative13" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 9100 12600)"/>
+      <use hole="right_negative14" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8700 12600)"/>
+      <use hole="right_negative15" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 8300 12600)"/>
+      <use hole="right_negative16" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7500 12600)"/>
+      <use hole="right_negative17" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 7100 12600)"/>
+      <use hole="right_negative18" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6700 12600)"/>
+      <use hole="right_negative19" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 6300 12600)"/>
+      <use hole="right_negative20" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 5900 12600)"/>
+      <use hole="right_negative21" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 5100 12600)"/>
+      <use hole="right_negative22" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4700 12600)"/>
+      <use hole="right_negative23" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 4300 12600)"/>
+      <use hole="right_negative24" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3900 12600)"/>
+      <use hole="right_negative25" xlink:href="#$:hole_not_connected" transform="matrix(1 0 0 1 3500 12600)"/>
     </g>
-    <g info="components" item="components">
-      <use component="lead" xlink:href="#$:lead" transform="matrix(0 0 0 0 0 0)"/>
-      <line component="line" x1="0" y1="0" x2="0" y2="0" stroke="none" stroke-width="80" stroke-linecap="round" />
-    </g>
+    <g item="components"></g>
   </g>
   <g info="wires" transform="matrix(0.05 0 0 0.05 0 0)">
     <g info="black" transform="matrix(0.84 0 0 0.84 150 -1420)">
@@ -665,59 +662,16 @@
       </g>
     </g>
   </g>
-  <defs>
-    <g id="$:lead">
-      <g transform="matrix(0.5 0 0 0.5 600 140)">
-        <g transform="rotate(0)">
-          <!--g transform="matrix(1.2155609130859375 0 0 1.2350006103515625 -992 -8)">
-          <path d="M 900 200 v -400 h -900 v 400 h 900 z" fill="rgb(1,1,1)" fill-opacity="0.000"/>
-          </g-->
-          <g transform="matrix(0.9988861083984375 0 0 0.771575927734375 -899 0)">
-            <g>
-              <path d="M 900 200 v -400 h -900 v 400 h 900 z" fill="rgb(1,1,1)" fill-opacity="0.000"/>
-            </g>
-          </g>
-          <g>
-            <g>
-              <path d="M -900 0 h 900" stroke-width="160" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(51,51,51)" stroke-opacity="1.000" fill="none"/>
-              <path d="M -900 0 h 900" stroke-width="120" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(160,160,160)" stroke-opacity="1.000" fill="none"/>
-              <path d="M -895 0 h 874" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(229,229,229)" stroke-opacity="1.000" fill="none"/>
-            </g>
-          </g>
-        </g>
-      </g>
-    </g>
-  </defs>
-  <defs info="patterns">
-    <g id="$:hole_not_connected">
-      <g transform="matrix(0.5 0 0 0.5 0 0)">
-        <g>
-          <path d="M 452 261 q 0 79 -56 135 q -55 55 -134 55 q -79 0 -134 -55 q -56 -56 -56 -135 q 0 -79 56 -134 q 55 -56 134 -56 h 4 h 5 q 76 0 128 53 q 53 53 53 128 v 5 v 4 z m -192 259 q 108 0 184 -76 q 76 -76 76 -184 q 0 -108 -76 -184 q -76 -76 -184 -76 q -108 0 -184 76 q -76 76 -76 184 q 0 108 76 184 q 76 76 184 76 z" fill="rgb(198,171,127)" fill-opacity="1.000"/>
-        </g>
-        <g transform="matrix(1 0 0 1 72 71)">
-          <g>
-            <path d="M 380 186 v -5 q 0 -75 -53 -128 q -52 -53 -128 -53 h -5 h -4 q -79 0 -134 56 q -56 55 -56 134 q 0 79 56 135 q 55 55 134 55 q 79 0 134 -55 q 56 -56 56 -135 v -4 z" fill="rgb(28,28,28)" fill-opacity="1.000"/>
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="$:hole_connected">
-      <g transform="matrix(0.5 0 0 0.5 0 0)">
-        <g>
-          <path d="M 452 261 q 0 79 -56 135 q -55 55 -134 55 q -79 0 -134 -55 q -56 -56 -56 -135 q 0 -79 56 -134 q 55 -56 134 -56 h 4 h 5 q 76 0 128 53 q 53 53 53 128 v 5 v 4 z m -192 259 q 108 0 184 -76 q 76 -76 76 -184 q 0 -108 -76 -184 q -76 -76 -184 -76 q -108 0 -184 76 q -76 76 -76 184 q 0 108 76 184 q 76 76 184 76 z" fill="#FBF25D" fill-opacity="1.000"/>
-        </g>
-        <g transform="matrix(1 0 0 1 72 71)">
-          <g>
-            <path d="M 380 186 v -5 q 0 -75 -53 -128 q -52 -53 -128 -53 h -5 h -4 q -79 0 -134 56 q -56 55 -56 134 q 0 79 56 135 q 55 55 134 55 q 79 0 134 -55 q 56 -56 56 -135 v -4 z" fill="rgb(28,28,28)" fill-opacity="1.000"/>
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="$:#:lead" style="cursor: pointer;" transform="matrix(1 0 0 1 14700 5400)">
+  <defs info="primitive">
+    <g primitive="group" />
+    <line primitive="line" x1="0" y1="0" x2="0" y2="0" stroke="none" stroke-width="80" stroke-linecap="round" />
+    <g primitive="lead" style="cursor: pointer;" transform="matrix(1 0 0 1 14700 5400)">
       <g transform="matrix(0.6 0 0 0.6 130 160)">
         <g transform="matrix(1 0 0 1 0 0)" type="orientation">
+          
           <g transform="matrix(1 0 0 1 -80 -650)">
             <g transform="matrix(0.8358306884765625 0.5443878173828125 -0.5443878173828125 0.8358306884765625 1019 604)" type="disconnected">
+              <rect width="1000" height="350" fill="rgb(0,0,255)" transform="matrix(1 0 0 1 -1000 -200)" opacity="0"/>
               <g transform="matrix(0.948944091796875 0 0 0.3317718505859375 -854 0)">
                 <g transform="matrix(0.822662353515625 0 0 0.809722900390625 816 6)">
                   <path d="M -992 -255 v 494 h 1094 v -494 h -1094 z" fill="rgb(1,1,1)" fill-opacity="0.000"/>
@@ -732,6 +686,7 @@
               </g>
             </g>
             <g transform="matrix(1 0 0 1 1019 604)" type="connected">
+              <rect width="1000" height="350" fill="rgb(0,0,255)" transform="matrix(1 0 0 1 -1000 -200)" opacity="0"/>
               <g>
                 <path d="M -992 -255 v 494 h 1094 v -494 h -1094 z" fill="rgb(1,1,1)" fill-opacity="0.000"/>
               </g>
@@ -766,6 +721,33 @@
                 <path d="M -155 172 l 85 95 l 89 -95 m -88 50 v 34" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(204,0,0)" stroke-opacity="1.000" fill="none"/>
               </g>
             </g>
+          </g>
+          <circle type="action" cx="350px" cy="0px" r="600px" fill="white" opacity="0"/>
+        </g>
+      </g>
+    </g>
+  </defs>
+  <defs info="patterns">
+    <g id="$:hole_not_connected">
+      <g transform="matrix(0.5 0 0 0.5 0 0)">
+        <g>
+          <path d="M 452 261 q 0 79 -56 135 q -55 55 -134 55 q -79 0 -134 -55 q -56 -56 -56 -135 q 0 -79 56 -134 q 55 -56 134 -56 h 4 h 5 q 76 0 128 53 q 53 53 53 128 v 5 v 4 z m -192 259 q 108 0 184 -76 q 76 -76 76 -184 q 0 -108 -76 -184 q -76 -76 -184 -76 q -108 0 -184 76 q -76 76 -76 184 q 0 108 76 184 q 76 76 184 76 z" fill="rgb(198,171,127)" fill-opacity="1.000"/>
+        </g>
+        <g transform="matrix(1 0 0 1 72 71)">
+          <g>
+            <path d="M 380 186 v -5 q 0 -75 -53 -128 q -52 -53 -128 -53 h -5 h -4 q -79 0 -134 56 q -56 55 -56 134 q 0 79 56 135 q 55 55 134 55 q 79 0 134 -55 q 56 -56 56 -135 v -4 z" fill="rgb(28,28,28)" fill-opacity="1.000"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="$:hole_connected">
+      <g transform="matrix(0.5 0 0 0.5 0 0)">
+        <g>
+          <path d="M 452 261 q 0 79 -56 135 q -55 55 -134 55 q -79 0 -134 -55 q -56 -56 -56 -135 q 0 -79 56 -134 q 55 -56 134 -56 h 4 h 5 q 76 0 128 53 q 53 53 53 128 v 5 v 4 z m -192 259 q 108 0 184 -76 q 76 -76 76 -184 q 0 -108 -76 -184 q -76 -76 -184 -76 q -108 0 -184 76 q -76 76 -76 184 q 0 108 76 184 q 76 76 184 76 z" fill="#FBF25D" fill-opacity="1.000"/>
+        </g>
+        <g transform="matrix(1 0 0 1 72 71)">
+          <g>
+            <path d="M 380 186 v -5 q 0 -75 -53 -128 q -52 -53 -128 -53 h -5 h -4 q -79 0 -134 56 q -56 55 -56 134 q 0 79 56 135 q 55 55 134 55 q 79 0 134 -55 q 56 -56 56 -135 v -4 z" fill="rgb(28,28,28)" fill-opacity="1.000"/>
           </g>
         </g>
       </g>

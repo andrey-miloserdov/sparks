@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <script type="text/javascript" src="libs/jquery-latest.min.js"></script>
     <script type="text/javascript" src="sparks.breadboard.js"></script>
-
     <link rel="stylesheet" type="text/css" href="sparks.breadboard.css">
   </head>
   <body style="margin: 0px; padding: 0px;">
@@ -20,19 +19,26 @@
         }, 100);
         var create_board = function() {
 
-          var circuit = breadboard.create("container");
+          window.circuit = breadboard.create("container");
           circuit.addComponent({
             "type" : "wire",
             "UID" : "w1",
             "connections" : "a22,f25",
-            "label" : "W1"
+            "label" : "W1",
+            "properties" : {
+              "color": "rgb(173,1,1)"
+            }
           });
-          circuit.addWire({
+          circuit.addComponent({
+            "type" : "wire",
             "UID" : "w2",
-            "connections" : "d5,d10",
-            "label" : "W2"
-          });
-
+            "connections" : "i13,b5",
+            "label" : "W2",
+            "properties" : {
+              "color": "rgb(100,100,100)"
+            }
+          });          
+          //circuit.removeComponent("w1");
         };
 
       </script>
