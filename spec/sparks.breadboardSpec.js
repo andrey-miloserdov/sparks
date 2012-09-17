@@ -6,7 +6,7 @@ var loading = setInterval(function() {
 }, 100);
 var start_test = function() {
 
-  //toContain was used to solve problem with different rendering in Chrome, IE and Firefox
+  //toContain was used to solve problem with different rendering in Chrome, IE, Firefox and Safari
 
   describe("On the breadboard", function() {
     var circuit = breadboard.create("container");
@@ -147,16 +147,16 @@ var start_test = function() {
 
         //inductor test
         bbox = $("#container").find("[uid=" + id + "]>g").eq(3)[0].getBBox();
-        expect([589, 565]).toContain(parseInt(bbox.height, 10));
-        expect([947, 945, 995]).toContain(parseInt(bbox.width, 10));
-        expect([-374, -373]).toContain(parseInt(bbox.x, 10));
-        expect([-163, -151]).toContain(parseInt(bbox.y, 10));
+        expect([648, 622]).toContain(parseInt(bbox.height, 10));
+        expect([1118, 1116, 995]).toContain(parseInt(bbox.width, 10));
+        expect([-409, -408]).toContain(parseInt(bbox.x, 10));
+        expect([-209, -196]).toContain(parseInt(bbox.y, 10));
 
         //label test
         $("#container").find("[type=label]").attr("display", "inline");
         bbox = $("#container").find("[type=label]")[0].getBBox();
         expect(parseInt(bbox.height, 10)).toEqual(719);
-        expect([1388, 1389, 1440, 1544]).toContain(parseInt(bbox.width, 10));
+        expect([1464, 1388, 1440, 1543]).toContain(parseInt(bbox.width, 10));
         expect(parseInt(bbox.x, 10)).toEqual(-193);
         expect(parseInt(bbox.y, 10)).toEqual(-75);
 
@@ -314,17 +314,17 @@ var start_test = function() {
 
         //capacitor test
         bbox = $("#container").find("[uid=" + id + "]>g").eq(3)[0].getBBox();
-        expect([871, 867]).toContain(parseInt(bbox.height, 10));
-        expect([870, 868]).toContain(parseInt(bbox.width, 10));
-        expect([-364, -362]).toContain(parseInt(bbox.x, 10));
-        expect([-308, -304]).toContain(parseInt(bbox.y, 10));
+        expect([632, 628]).toContain(parseInt(bbox.height, 10));
+        expect([631, 629]).toContain(parseInt(bbox.width, 10));
+        expect([-174, -173]).toContain(parseInt(bbox.x, 10));
+        expect([-221, -218]).toContain(parseInt(bbox.y, 10));
 
         //label test
         $("#container").find("[type=label]").attr("display", "inline");
         bbox = $("#container").find("[type=label]")[0].getBBox();
         expect([18, 17, 16]).toContain(parseInt(bbox.height, 10));
-        expect([18, 17]).toContain(parseInt(bbox.width, 10));
-        expect(parseInt(bbox.x, 10)).toEqual(-10);
+        expect([17, 19, 20, 21]).toContain(parseInt(bbox.width, 10));
+        expect([-10, -11]).toContain(parseInt(bbox.x, 10));
         expect([-8, -9, -7]).toContain(parseInt(bbox.y, 10));
 
       });
