@@ -12,7 +12,7 @@
     <div id="container" style="width: 800px; height: 500px;">
       <script type="text/javascript">
         var loading = setInterval(function() {
-          if(breadboard.ready) {
+          if (breadboard.ready) {
             clearInterval(loading);
             create_board();
           };
@@ -25,19 +25,42 @@
             "UID" : "w1",
             "connections" : "a22,f25",
             "label" : "W1",
-            "properties" : {
-              "color": "rgb(173,1,1)"
-            }
+            "color" : "rgb(173,1,1)"
           });
           circuit.addComponent({
             "type" : "wire",
             "UID" : "w2",
             "connections" : "i13,b5",
             "label" : "W2",
-            "properties" : {
-              "color": "rgb(100,100,100)"
-            }
-          });          
+            "color" : "rgb(100,100,100)"
+          });
+          circuit.addComponent({
+            "type" : "inductor",
+            "UID" : "l1",
+            "connections" : "a21,a10",
+            "label" : "L1"
+          });
+          circuit.addComponent({
+            "type" : "resistor",
+            "UID" : "r1",
+            "connections" : "j30,j1",
+            "label" : "R5",
+            "color" : ['silver', 'brown', 'grey', 'orange']
+          });
+          circuit.addComponent({
+            "type" : "resistor",
+            "UID" : "r2",
+            "connections" : "f8,f23",
+            "label" : "R2",
+            "color" : ['violet', 'gold', 'blue', 'white', 'yellow']
+          });         
+          circuit.addComponent({
+            "type" : "capacitor",
+            "UID" : "c1",
+            "connections" : "e30,e10",
+            "label" : "C1",
+            "color" : "rgb(0,0,255)"
+          });
           //circuit.removeComponent("w1");
         };
 

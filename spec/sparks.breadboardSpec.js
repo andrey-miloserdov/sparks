@@ -1,37 +1,358 @@
 var loading = setInterval(function() {
   if(breadboard.ready) {
     clearInterval(loading);
-    start_test.call(window);
+    start_test();
   }
 }, 100);
 var start_test = function() {
 
+  //toContain was used to solve problem with different rendering in Chrome, IE and Firefox
+
   describe("On the breadboard", function() {
     var circuit = breadboard.create("container");
 
-    var id = "uid1";
-
-    it("was created a wire", function() {
-      circuit.addComponent({
-        "type" : "wire",
-        "UID" : id,
-        "connections" : "f13,a3",
-        "label" : "label",
-        "properties" : {
-          "color" : "rgb(173,1,1)"
-        }
+    var checkCreateComponent = function(id) {
+      it("appeared in DOM", function() {
+        expect($("#container").find("[uid=" + id + "]").length).toEqual(1);
       });
-      expect(circuit.component[id]).toBeDefined();
+      it("rendered", function() {
+        expect($("#container").find("[uid=" + id + "]")[0]['getBBox']).toBeDefined();
+      });
+    };
+    var checkRemoveComponent = function(id) {
+      it("was removed", function() {
+        circuit.removeComponent(id);
+        expect(circuit.component[id]).toBeNull();
+      });
+      it("disappeared from DOM", function() {
+        expect($("#container").find("[uid=" + id + "]").length).toEqual(0);
+      });
+    };
+    describe("wire", function() {
+      var id = "uid1";
+
+      it("was created", function() {
+        circuit.addComponent({
+          "type" : "wire",
+          "UID" : id,
+          "connections" : "f13,a3",
+          "color" : "rgb(173,1,1)"
+        });
+        expect(circuit.component[id]).toBeDefined();
+      });
+      checkCreateComponent(id);
+      it("placed in correct position", function() {
+
+        //connector test
+        var bbox = $("#container").find("[uid=" + id + "]>g").eq(0).find('>g>g path').eq(0)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(0);
+        expect(parseInt(bbox.width, 10)).toEqual(6084);
+				var ctm = $("#container").find("[uid=" + id + "]>g").eq(0).find('>g>g path').eq(0)[0].getCTM();
+        expect(parseInt(ctm.e, 10)).toEqual(428);
+        expect(parseInt(ctm.f, 10)).toEqual(318);
+        
+        //lead_0 test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(1)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(720);
+        expect(parseInt(bbox.width, 10)).toEqual(774);
+        expect(parseInt(bbox.x, 10)).toEqual(-494);
+        expect(parseInt(bbox.y, 10)).toEqual(-200);
+
+        //lead_1 test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(2)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(720);
+        expect(parseInt(bbox.width, 10)).toEqual(774);
+        expect(parseInt(bbox.x, 10)).toEqual(-20);
+        expect(parseInt(bbox.y, 10)).toEqual(-200);
+
+      });
+      checkRemoveComponent(id);
     });
-    it("wire appeared in DOM", function() {
-      expect($("#container").find("[uid=" + id + "]").length).toEqual(1);
+    describe("diagonal wire", function() {
+      var id = "uid2";
+
+      it("was created", function() {
+        circuit.addComponent({
+          "type" : "wire",
+          "UID" : id,
+          "connections" : "j30,a1",
+          "color" : "rgb(173,1,1)"
+        });
+        expect(circuit.component[id]).toBeDefined();
+      });
+      checkCreateComponent(id);
+      it("placed in correct position", function() {
+
+        //connector test
+        var bbox = $("#container").find("[uid=" + id + "]>g").eq(0).find('>g>g path').eq(0)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(0);
+        expect(parseInt(bbox.width, 10)).toEqual(18810);
+        var ctm = $("#container").find("[uid=" + id + "]>g").eq(0).find('>g>g path').eq(0)[0].getCTM();
+        expect(parseInt(ctm.e, 10)).toEqual(158);
+        expect(parseInt(ctm.f, 10)).toEqual(395);
+
+        //lead_0 test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(1)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(720);
+        expect(parseInt(bbox.width, 10)).toEqual(774);
+        expect(parseInt(bbox.x, 10)).toEqual(-494);
+        expect(parseInt(bbox.y, 10)).toEqual(-200);
+
+        //lead_1 test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(2)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(720);
+        expect(parseInt(bbox.width, 10)).toEqual(774);
+        expect(parseInt(bbox.x, 10)).toEqual(-20);
+        expect(parseInt(bbox.y, 10)).toEqual(-200);
+
+      });
+      checkRemoveComponent(id);
     });
-    it("wire was removed", function() {
-      circuit.removeComponent(id);
-      expect(circuit.component[id]).toBeNull();
+    describe("inductor", function() {
+      var id = "uid3";
+
+      it("was created", function() {
+        circuit.addComponent({
+          "type" : "inductor",
+          "UID" : id,
+          "connections" : "b23,j2",
+          "label" : "label"
+        });
+        expect(circuit.component[id]).toBeDefined();
+      });
+      checkCreateComponent(id);
+      it("placed in correct position", function() {
+
+        //connector test
+        var bbox = $("#container").find("[uid=" + id + "]>g").eq(0).find('>g>g path').eq(0)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(0);
+        expect(parseInt(bbox.width, 10)).toEqual(13603);
+        var ctm = $("#container").find("[uid=" + id + "]>g").eq(0).find('>g>g path').eq(0)[0].getCTM();
+        expect(parseInt(ctm.e, 10)).toEqual(269);
+        expect(parseInt(ctm.f, 10)).toEqual(254);
+
+        //lead_0 test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(1)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(720);
+        expect(parseInt(bbox.width, 10)).toEqual(774);
+        expect(parseInt(bbox.x, 10)).toEqual(-494);
+        expect(parseInt(bbox.y, 10)).toEqual(-200);
+
+        //lead_1 test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(2)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(720);
+        expect(parseInt(bbox.width, 10)).toEqual(774);
+        expect(parseInt(bbox.x, 10)).toEqual(-20);
+        expect(parseInt(bbox.y, 10)).toEqual(-200);
+
+        //inductor test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(3)[0].getBBox();
+        expect([589, 565]).toContain(parseInt(bbox.height, 10));
+        expect([947, 945, 995]).toContain(parseInt(bbox.width, 10));
+        expect([-374, -373]).toContain(parseInt(bbox.x, 10));
+        expect([-163, -151]).toContain(parseInt(bbox.y, 10));
+
+        //label test
+        $("#container").find("[type=label]").attr("display", "inline");
+        bbox = $("#container").find("[type=label]")[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(719);
+        expect([1388, 1389, 1440, 1544]).toContain(parseInt(bbox.width, 10));
+        expect(parseInt(bbox.x, 10)).toEqual(-193);
+        expect(parseInt(bbox.y, 10)).toEqual(-75);
+
+      });
+      checkRemoveComponent(id);
     });
-    it("wire disappeared from DOM", function() {
-      expect($("#container").find("[uid=" + id + "]").length).toEqual(0);
+    describe("resistor (4 band)", function() {
+      var id = "uid4";
+
+      it("was created", function() {
+        circuit.addComponent({
+          "type" : "resistor",
+          "UID" : id,
+          "connections" : "h30,j1",
+          "label" : "R5",
+          "color" : ['black', 'green', 'red', 'blue']
+        });
+        expect(circuit.component[id]).toBeDefined();
+      });
+      checkCreateComponent(id);
+      it("placed in correct position", function() {
+
+        //connector test
+        var bbox = $("#container").find("[uid=" + id + "]>g").eq(2).find('>g>g path').eq(0)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(0);
+        expect(parseInt(bbox.width, 10)).toEqual(17524);
+        var ctm = $("#container").find("[uid=" + id + "]>g").eq(2).find('>g>g path').eq(0)[0].getCTM();
+        expect(parseInt(ctm.e, 10)).toEqual(159);
+        expect(parseInt(ctm.f, 10)).toEqual(369);
+
+        //lead_0 test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(0)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(720);
+        expect(parseInt(bbox.width, 10)).toEqual(774);
+        expect(parseInt(bbox.x, 10)).toEqual(-494);
+        expect(parseInt(bbox.y, 10)).toEqual(-200);
+
+        //lead_1 test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(1)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(720);
+        expect(parseInt(bbox.width, 10)).toEqual(774);
+        expect(parseInt(bbox.x, 10)).toEqual(-20);
+        expect(parseInt(bbox.y, 10)).toEqual(-200);
+
+        //resistor test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(3).find('>g>g').eq(0)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(64);
+        expect(parseInt(bbox.width, 10)).toEqual(190);
+        expect(parseInt(bbox.x, 10)).toEqual(-94);
+        expect(parseInt(bbox.y, 10)).toEqual(-32);
+
+        //label test
+        $("#container").find("[type=label]").attr("display", "inline");
+        bbox = $("#container").find("[type=label]")[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(5522);
+        expect(parseInt(bbox.width, 10)).toEqual(6964);
+        expect(parseInt(bbox.x, 10)).toEqual(-14);
+        expect(parseInt(bbox.y, 10)).toEqual(-12);
+
+      });
+      checkRemoveComponent(id);
+    });
+    describe("resistor (5 band)", function() {
+      var id = "uid5";
+
+      it("was created", function() {
+        circuit.addComponent({
+          "type" : "resistor",
+          "UID" : id,
+          "connections" : "f8,f23",
+          "label" : "R2",
+          "color" : ['violet', 'gold', 'blue', 'white', 'yellow']
+        });
+        expect(circuit.component[id]).toBeDefined();
+      });
+      checkCreateComponent(id);
+      it("placed in correct position", function() {
+
+        //connector test
+        var bbox = $("#container").find("[uid=" + id + "]>g").eq(2).find('>g>g path').eq(0)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(0);
+        expect(parseInt(bbox.width, 10)).toEqual(8133);
+        var ctm = $("#container").find("[uid=" + id + "]>g").eq(2).find('>g>g path').eq(0)[0].getCTM();
+        expect(parseInt(ctm.e, 10)).toEqual(466);
+        expect(parseInt(ctm.f, 10)).toEqual(331);
+
+        //lead_0 test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(0)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(720);
+        expect(parseInt(bbox.width, 10)).toEqual(774);
+        expect(parseInt(bbox.x, 10)).toEqual(-494);
+        expect(parseInt(bbox.y, 10)).toEqual(-200);
+
+        //lead_1 test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(1)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(720);
+        expect(parseInt(bbox.width, 10)).toEqual(774);
+        expect(parseInt(bbox.x, 10)).toEqual(-20);
+        expect(parseInt(bbox.y, 10)).toEqual(-200);
+
+        //resistor test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(3)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(576);
+        expect(parseInt(bbox.width, 10)).toEqual(1710);
+        expect(parseInt(bbox.x, 10)).toEqual(-846);
+        expect(parseInt(bbox.y, 10)).toEqual(-138);
+
+        //label test
+        $("#container").find("[type=label]").attr("display", "inline");
+        bbox = $("#container").find("[type=label]")[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(24);
+        expect(parseInt(bbox.width, 10)).toEqual(28);
+        expect(parseInt(bbox.x, 10)).toEqual(-14);
+        expect(parseInt(bbox.y, 10)).toEqual(-12);
+
+      });
+      checkRemoveComponent(id);
+    });
+    describe("capacitor", function() {
+      var id = "uid6";
+
+      it("was created", function() {
+        circuit.addComponent({
+          "type" : "capacitor",
+          "UID" : id,
+          "connections" : "e30,e10",
+          "label" : "C1"
+        });
+        expect(circuit.component[id]).toBeDefined();
+      });
+      checkCreateComponent(id);
+      it("placed in correct position", function() {
+
+        //connector test
+        var bbox = $("#container").find("[uid=" + id + "]>g").eq(2).find('>g>g path').eq(0)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(0);
+        expect(parseInt(bbox.width, 10)).toEqual(11466);
+        var ctm = $("#container").find("[uid=" + id + "]>g").eq(2).find('>g>g path').eq(0)[0].getCTM();
+        expect(parseInt(ctm.e, 10)).toEqual(159);
+        expect(parseInt(ctm.f, 10)).toEqual(299);
+
+        //lead_0 test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(0)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(720);
+        expect(parseInt(bbox.width, 10)).toEqual(774);
+        expect(parseInt(bbox.x, 10)).toEqual(-494);
+        expect(parseInt(bbox.y, 10)).toEqual(-200);
+
+        //lead_1 test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(1)[0].getBBox();
+        expect(parseInt(bbox.height, 10)).toEqual(720);
+        expect(parseInt(bbox.width, 10)).toEqual(774);
+        expect(parseInt(bbox.x, 10)).toEqual(-20);
+        expect(parseInt(bbox.y, 10)).toEqual(-200);
+
+        //capacitor test
+        bbox = $("#container").find("[uid=" + id + "]>g").eq(3)[0].getBBox();
+        expect([871, 867]).toContain(parseInt(bbox.height, 10));
+        expect([870, 868]).toContain(parseInt(bbox.width, 10));
+        expect([-364, -362]).toContain(parseInt(bbox.x, 10));
+        expect([-308, -304]).toContain(parseInt(bbox.y, 10));
+
+        //label test
+        $("#container").find("[type=label]").attr("display", "inline");
+        bbox = $("#container").find("[type=label]")[0].getBBox();
+        expect([18, 17, 16]).toContain(parseInt(bbox.height, 10));
+        expect([18, 17]).toContain(parseInt(bbox.width, 10));
+        expect(parseInt(bbox.x, 10)).toEqual(-10);
+        expect([-8, -9, -7]).toContain(parseInt(bbox.y, 10));
+
+      });
+      checkRemoveComponent(id);
     });
   });
+  runTests();
+};
+var runTests = function() {
+  var jasmineEnv = jasmine.getEnv();
+  jasmineEnv.updateInterval = 1000;
+
+  var trivialReporter = new jasmine.TrivialReporter();
+
+  jasmineEnv.addReporter(trivialReporter);
+
+  jasmineEnv.specFilter = function(spec) {
+    return trivialReporter.specFilter(spec);
+  };
+  var currentWindowOnload = window.onload;
+
+  if(currentWindowOnload) {
+    currentWindowOnload();
+  }
+  execJasmine();
+  function execJasmine() {
+
+    jasmineEnv.execute();
+  }
+
 };
