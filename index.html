@@ -10,35 +10,37 @@
   </head>
   <body style="margin: 0px; padding: 0px;">
     <div id="container" style="width: 800px; height: 500px;">
+      <div style=" text-align: center; border: 1px solid gray;">
+        <img style="vertical-align: middle; height: 498px;" src="libs/loading.gif"/>
+      </div>
       <script type="text/javascript">
         var loading = setInterval(function() {
-          if (breadboard.ready) {
+          if(breadboard.ready) {
             clearInterval(loading);
             create_board();
           };
         }, 100);
         var create_board = function() {
-
           window.circuit = breadboard.create("container");
           circuit.addComponent({
             "type" : "wire",
             "UID" : "w1",
             "connections" : "a22,f25",
-            "label" : "W1",
-            "color" : "rgb(173,1,1)"
+            "color" : "rgb(173,1,1)",
+            "draggable" : true
           });
           circuit.addComponent({
             "type" : "wire",
             "UID" : "w2",
             "connections" : "i13,b5",
-            "label" : "W2",
             "color" : "rgb(100,100,100)"
           });
           circuit.addComponent({
             "type" : "inductor",
             "UID" : "l1",
             "connections" : "a21,a10",
-            "label" : "L1"
+            "label" : "L1",
+            "draggable" : true
           });
           circuit.addComponent({
             "type" : "resistor",
@@ -52,16 +54,37 @@
             "UID" : "r2",
             "connections" : "f8,f23",
             "label" : "R2",
-            "color" : ['violet', 'gold', 'blue', 'white', 'yellow']
-          });         
+            "color" : ['violet', 'gold', 'blue', 'white', 'yellow'],
+            "draggable" : true
+          });
           circuit.addComponent({
             "type" : "capacitor",
             "UID" : "c1",
             "connections" : "e30,e10",
             "label" : "C1",
-            "color" : "rgb(0,0,255)"
+            "color" : "rgb(0,0,255)",
+            "draggable" : true
           });
-          //circuit.removeComponent("w1");
+          circuit.addBattery("left_negative21,left_positive21");
+          circuit.addDMM({
+            "dial": "acv_200",
+            "black":{
+            "connection": "f23",
+            "draggable": true
+          },"red": {
+            "connection": "h3",
+            "draggable": false            
+          }
+          });
+          circuit.addOScope({
+            "yellow":{
+            "connection": "left_positive21",
+            "draggable": true
+          },"pink": {
+            "connection": "h28",
+            "draggable": true            
+          }
+          });
         };
 
       </script>

@@ -1,0 +1,62 @@
+API for SPARKS
+
+// Adds a 9V battery to the circuit, with leads connected to the positive and negative power rails
+addBattery(connection)
+params:
+connection (string) - position of the positive and negative power rails( first - negative, second - positive)
+exapmle:
+circuit.addBattery("left_negative21,left_positive21")
+
+// Remove a 9V battery on the circuit, if it's exists
+removeBattery()
+params:
+exapmle:
+circuit.removeBattery()
+
+// Adds a circuit component
+addComponent(Object)
+params:
+Object['type'] (string) - type of the component ("resistor", "capacitor", "wire" or "inductor")
+Object['UID'] (string) - ID of the component
+Object['connections'] (string) - position of leads
+Object['label'] (string) - label of the element (available for inductor, capacitor and resistor)
+Object['color'] (string or array of strings) - color of the element (available for wire(string), capacitor(string) and resistor(array: 4 or 5 values))
+For wire can be an rgb, hex or simple name.
+For capacitor can be an rgb, hex or simple name.
+For resistor have determined values. The last one color will be big band.
+Available colors for small bands of the resistor - "yellow", "silver", "grey", "brown", "orange", "violet", "gold", "black", "green", "white", "blue", "red".
+Available colors for big bands of the resistor   - "yellow",                   "brown", "orange", "violet",         "black", "green", "white", "blue", "red".
+exapmle:
+circuit.addComponent({"type" : "wire",      "UID" : "w1", "connections" : "a22,f25", "color" : "rgb(173,1,1)" })
+circuit.addComponent({"type" : "wire",      "UID" : "w2", "connections" : "i13,b5",  "color" : "#ab12ff" })
+circuit.addComponent({"type" : "inductor",  "UID" : "l1", "connections" : "a21,a10", "label" : "L1" })
+circuit.addComponent({"type" : "resistor",  "UID" : "r1", "connections" : "j30,j1",  "label" : "R5", "color" : ['silver', 'brown', 'grey', 'orange']})
+circuit.addComponent({"type" : "resistor",  "UID" : "r2", "connections" : "f8,f23",  "label" : "R2", "color" : ['violet', 'gold', 'blue', 'white', 'yellow'] })
+circuit.addComponent({"type" : "capacitor", "UID" : "c1", "connections" : "e30,e10", "label" : "C1", "color" : "rgb(0,0,255)"});
+
+// Adds a circuit component
+removeComponent(UID)
+params:
+Object['UID'] (string) - ID of the component
+exapmle:
+circuit.removeComponent("uid1");
+
+// Adds the DMM and DMM probes
+addDMM(Object)
+params:
+Object['black']['connection'] (string) - initial position of black probe
+Object['black']['draggable'] (boolean) - make black probe draggable or fixed
+Object['red']['connection'] (string) - initial position of red probe
+Object['red']['draggable'] (boolean) - make red probe draggable or fixed
+exapmle:
+circuit.addDMM({ "black":{ "connection": "g19", "draggable": true }, "red": { "connection": "h3", "draggable": false }});
+
+// Adds the probes of OScope
+addOScope(Object)
+params:
+Object['pink']['connection'] (string) - initial position of pink probe
+Object['pink']['draggable'] (boolean) - make pink probe draggable or fixed
+Object['yellow']['connection'] (string) - initial position of yellow probe
+Object['yellow']['draggable'] (boolean) - make yellow probe draggable or fixed
+exapmle:
+circuit.addOScope({ "yellow":{ "connection": "left_positive21", "draggable": true }, "pink":{ "connection": "h28", "draggable": true }});
