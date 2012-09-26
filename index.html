@@ -14,12 +14,6 @@
         <img style="vertical-align: middle; height: 498px;" src="libs/loading.gif"/>
       </div>
       <script type="text/javascript">
-        var loading = setInterval(function() {
-          if(breadboard.ready) {
-            clearInterval(loading);
-            create_board();
-          };
-        }, 100);
         var create_board = function() {
           window.circuit = breadboard.create("container");
           circuit.addComponent({
@@ -87,6 +81,9 @@
           });
         };
 
+        breadboard.ready(function() {
+          create_board();
+        });
       </script>
     </div>
   </body>

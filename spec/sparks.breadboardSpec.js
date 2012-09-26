@@ -41,7 +41,8 @@ var start_test = function() {
           "type" : "wire",
           "UID" : id,
           "connections" : "f13,a3",
-          "color" : "rgb(173,1,1)"
+          "color" : "rgb(173,1,1)",
+          "draggable" : true
         });
         expect(circuit.component[id]).toBeDefined();
       });
@@ -90,26 +91,42 @@ var start_test = function() {
 
       it("lead0 disconnected", function() {
         var o = $("#container").find("[uid=" + id + "]>g").eq(1);
-        o.find("circle").simulate("mouseup");
+        var c = breadboard.eventStatus.counter;
+        o.find("circle").simulate("mousedown").simulate("mouseup");
         checkBBox(o[0].getBBox(), [814, 778, -498, -294]);
+        expect(breadboard.eventStatus.counter).toEqual(c + 1);
+        expect(breadboard.eventStatus.eventName).toEqual("connectionBroken");
+        expect(breadboard.eventStatus.eventData).toEqual("uid1|f13");
       });
 
       it("lead0 connected", function() {
         var o = $("#container").find("[uid=" + id + "]>g").eq(1);
-        o.find("circle").simulate("mouseup");
+        var c = breadboard.eventStatus.counter;
+        o.find("circle").simulate("mousedown").simulate("mouseup");
         checkBBox(o[0].getBBox(), [720, 774, -494, -200]);
+        expect(breadboard.eventStatus.counter).toEqual(c + 1);
+        expect(breadboard.eventStatus.eventName).toEqual("connectionMade");
+        expect(breadboard.eventStatus.eventData).toEqual("uid1|f13");
       });
 
       it("lead1 disconnected", function() {
         var o = $("#container").find("[uid=" + id + "]>g").eq(2);
+        var c = breadboard.eventStatus.counter;
         o.find("circle").simulate("mouseup");
         checkBBox(o[0].getBBox(), [814, 778, -20, -294]);
+        expect(breadboard.eventStatus.counter).toEqual(c + 1);
+        expect(breadboard.eventStatus.eventName).toEqual("connectionBroken");
+        expect(breadboard.eventStatus.eventData).toEqual("uid1|a3");
       });
 
       it("lead1 connected", function() {
         var o = $("#container").find("[uid=" + id + "]>g").eq(2);
+        var c = breadboard.eventStatus.counter;
         o.find("circle").simulate("mouseup");
         checkBBox(o[0].getBBox(), [720, 774, -20, -200]);
+        expect(breadboard.eventStatus.counter).toEqual(c + 1);
+        expect(breadboard.eventStatus.eventName).toEqual("connectionMade");
+        expect(breadboard.eventStatus.eventData).toEqual("uid1|a3");
       });
 
       checkRemoveComponent(id);
@@ -453,10 +470,14 @@ var start_test = function() {
       });
       it("tumbler can to be set in new value", function() {
         // mousedown event check
+        var c = breadboard.eventStatus.counter;
         tumbler.simulate("mousedown", {
           x : 0,
           y : 0
         });
+        expect(breadboard.eventStatus.counter).toEqual(c + 1);
+        expect(breadboard.eventStatus.eventName).toEqual("dmmDialMoved");
+        expect(breadboard.eventStatus.eventData).toEqual("dcv_2000m");
         // angle 288
         matrix = tumbler[0].getCTM();
         // check the angle of tumbler in DOM
@@ -492,10 +513,12 @@ var start_test = function() {
       });
       it("black probe draggable", function() {
         var trn1 = probe.black.attr('transform');
+        console.log(breadboard.eventStatus)
         probe.black.simulate("drag", {
-          dx : 10,
-          dy : 10
+          dx : 20,
+          dy : 20
         });
+        console.log(breadboard.eventStatus)
         var trn2 = probe.black.attr('transform');
         expect(trn1).not.toEqual(trn2);
         // draggable
@@ -536,7 +559,7 @@ var start_test = function() {
         expect(circuit.component[id].leads[1].probe).toBeDefined();
       });
       it("dmm, black and red probes were removed", function() {
-        circuit.removeDMM();
+        //circuit.removeDMM();
         circuit.removeComponent(id);
         expect(multimeter.css('display')).toContain('none');
         expect(probe.black.css('visibility')).toContain('hidden');
