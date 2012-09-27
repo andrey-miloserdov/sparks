@@ -279,10 +279,12 @@ window["breadboard"].dmmDialMoved = function(value) {
   };
 
   CircuitBoard.prototype.toFront = function(component) {
-    var self = this; //resolve crash in Google Chrome by changing environment
+    var self = this; // resolve crash in Google Chrome by changing environment
     setTimeout(function() {
+      var i = component.view.index();
       var redrawId = component.view[0].ownerSVGElement.suspendRedraw(50);
-      self.workspace.append(component.view);
+      // use prepend to avoid crash in iOS
+      self.workspace.prepend(component.view.parent().children(':gt('+i+')'));
       component.view[0].ownerSVGElement.unsuspendRedraw(redrawId);
     },50)
   };
@@ -462,8 +464,6 @@ window["breadboard"].dmmDialMoved = function(value) {
     board.holder[0].addEventListener(_mousedown, function(evt) {
       component = $(evt._target).data('component') || null;
       if (component) {
-        board.toFront(component);
-
         s_pos = getCoords(evt, board.holder);
 
         l1 = component.leads[0];
@@ -478,8 +478,11 @@ window["breadboard"].dmmDialMoved = function(value) {
         ho2 = component.hole[1].highlight();
         hi1 = hn1 = ho1;
         hi2 = hn2 = ho2;
+
+        board.toFront(component);
+        evt.preventDefault();
       }
-      //evt.preventDefault();
+      //
     }, false);
 
     board.holder[0].addEventListener(_mousemove, function(evt) {
@@ -594,8 +597,8 @@ window["breadboard"].dmmDialMoved = function(value) {
         p2.x = lead_pair.x;
         p2.y = lead_pair.y;
         pts = (lead_this.orientation == 1) ? [p1, p2] : [p2, p1];
+        evt.preventDefault();
       }
-      evt.preventDefault();
     }, false);
 
     board.holder[0].addEventListener(_mousemove, function(evt) {
