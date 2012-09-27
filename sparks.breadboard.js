@@ -278,6 +278,15 @@ window["breadboard"].dmmDialMoved = function(value) {
     this.oscope.probe['pink'].view.hide();
   };
 
+  CircuitBoard.prototype.toFront = function(component) {
+    var self = this; //resolve crash in Google Chrome by changing environment
+    setTimeout(function() {
+      var redrawId = component.view[0].ownerSVGElement.suspendRedraw(50);
+      self.workspace.append(component.view);
+      component.view[0].ownerSVGElement.unsuspendRedraw(redrawId);
+    },50)
+  };
+
   // holes constructor
   var CircuitBoardHole = function(elem) {
     this.name = elem.attr('hole');
@@ -453,6 +462,8 @@ window["breadboard"].dmmDialMoved = function(value) {
     board.holder[0].addEventListener(_mousedown, function(evt) {
       component = $(evt._target).data('component') || null;
       if (component) {
+        board.toFront(component);
+
         s_pos = getCoords(evt, board.holder);
 
         l1 = component.leads[0];
@@ -468,7 +479,7 @@ window["breadboard"].dmmDialMoved = function(value) {
         hi1 = hn1 = ho1;
         hi2 = hn2 = ho2;
       }
-      evt.preventDefault();
+      //evt.preventDefault();
     }, false);
 
     board.holder[0].addEventListener(_mousemove, function(evt) {
@@ -912,9 +923,8 @@ window["breadboard"].dmmDialMoved = function(value) {
     }
 
     // temp vars
-    var active, lead_new, lead_old, point, coeff = 20;
-    var s_pos, c_pos, x, y, dx, dy;
-    // shortcuts
+    var active, lead_new, lead_old, lead_init, point;
+    var s_pos, c_pos, x, y, dx, dy, coeff = 20;
 
     board.holder.find('[info=probe]').each(function() {
       this.addEventListener(_mousedown, function(evt) {
@@ -922,6 +932,7 @@ window["breadboard"].dmmDialMoved = function(value) {
         if (active.draggable) {
           s_pos = getCoords(evt, board.holder);
           calcLeadsBBox.call(board);
+          lead_init = active.lead;
           evt.stopPropagation();
           evt.preventDefault();
           // hack to avoid errors if mousedown+mouseup-mousemove
@@ -949,6 +960,10 @@ window["breadboard"].dmmDialMoved = function(value) {
           'y' : (active.y + dy)
         };
         lead_new = findLeadUnderProbe(board, point);
+        if (lead_init) {
+          board.sendEventToModel("probeRemoved", [active.name, active.color]);
+          lead_init = null;
+        }
         if (lead_new) {
           lead_new.highlight(1);
           lead_old = lead_new;
@@ -957,7 +972,6 @@ window["breadboard"].dmmDialMoved = function(value) {
           if (lead_old) {
             lead_old.highlight(0);
             lead_old = null;
-            board.sendEventToModel("probeRemoved", [active.name, active.color]);
           }
         }
       }
@@ -971,6 +985,9 @@ window["breadboard"].dmmDialMoved = function(value) {
         active.dy = y;
         if (lead_new) {
           active.setState(lead_new);
+        } else
+        if (active.lead) {
+          active.lead = null;
         }
         active = null;
       }
