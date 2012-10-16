@@ -151,7 +151,9 @@ window["breadboard"].dmmDialMoved = function(value) {
   var CircuitBoard = function(id) {
     var self = this;
     // link to main holder
-    this.holder = $('#' + id).html('').append(paper).addClass('circuit-board');
+    this.holder = $('#' + id).html('').append(
+      SVGStorage.create('board')
+    ).addClass('circuit-board');
 
     this.workspace = this.holder.find("[item=components]");
     this.holes = {
@@ -279,14 +281,15 @@ window["breadboard"].dmmDialMoved = function(value) {
   };
 
   CircuitBoard.prototype.toFront = function(component) {
-    var self = this; // resolve crash in Google Chrome by changing environment
+    // resolve crash in Google Chrome by changing environment
+    var self = this;
     setTimeout(function() {
       var i = component.view.index();
       var redrawId = component.view[0].ownerSVGElement.suspendRedraw(50);
       // use prepend to avoid crash in iOS
-      self.workspace.prepend(component.view.parent().children(':gt('+i+')'));
+      self.workspace.prepend(component.view.parent().children(':gt(' + i + ')'));
       component.view[0].ownerSVGElement.unsuspendRedraw(redrawId);
-    },50)
+    }, 50);
   };
 
   // holes constructor
@@ -405,7 +408,7 @@ window["breadboard"].dmmDialMoved = function(value) {
     this.connector = this.element;
     this.view.append(this.element.view, this.leads[0].view, this.leads[1].view);
     // add event handler for draggable
-    component.prototype.drag.call(this, params.draggable);
+    component.prototype.drag.call(this, params.draggable, params.type);
   };
 
   component.inductor = function(params, holes, board) {
@@ -436,11 +439,14 @@ window["breadboard"].dmmDialMoved = function(value) {
     component.prototype.drag.call(this, params.draggable);
   };
 
-  component.prototype.drag = function(draggable) {
+  component.prototype.drag = function(draggable, type) {
     if (draggable) {
       var self = this;
       this.x = 0;
       this.y = 0;
+      if (type == 'wire') {
+        this.view.find('[drag=area]').attr('display', 'inline');
+      }
       this.element.view[0].addEventListener(_mousedown, function(evt) {
         self.element.view.data('component', self);
         evt._target = this;
@@ -584,7 +590,7 @@ window["breadboard"].dmmDialMoved = function(value) {
     }, p2 = {
       x : 0,
       y : 0
-    }, deg, hi,ho, hn;
+    }, deg, hi, ho, hn;
 
     board.holder[0].addEventListener(_mousedown, function(evt) {
       lead_this = $(evt.target).data('primitive-lead') || null;
@@ -988,8 +994,7 @@ window["breadboard"].dmmDialMoved = function(value) {
         active.dy = y;
         if (lead_new) {
           active.setState(lead_new);
-        } else
-        if (active.lead) {
+        } else if (active.lead) {
           active.lead = null;
         }
         active = null;
@@ -1099,7 +1104,7 @@ window["breadboard"].dmmDialMoved = function(value) {
       });
       this.view.bind('mouseleave', function() {
         self.help.hide();
-        self.zoomOut();
+        //self.zoomOut();
       });
     }
 
@@ -1215,18 +1220,16 @@ window["breadboard"].dmmDialMoved = function(value) {
   };
 
   primitive.mmbox.prototype.zoomOut = function() {
-    var self = this;
     this.item.attr('transform', 'scale(0.50)');
     this.over.show();
-    self.zoom = 0;
+    this.zoom = 0;
   };
 
   primitive.mmbox.prototype.zoomIn = function() {
-    var self = this;
     this.item.attr('transform', 'scale(1.00)');
     this.help.hide();
     this.over.hide();
-    self.zoom = 1;
+    this.zoom = 1;
   };
 
   primitive.btbox = function(board) {
@@ -1281,10 +1284,13 @@ window["breadboard"].dmmDialMoved = function(value) {
     // calc transforms
     var trn = 'matrix(1 0 0 1 ' + parseInt(pts[0].x, 10) + ' ' + parseInt(pts[0].y, 10) + ') rotate(' + deg + ',130,130)';
     // calc path
-    var leadLenght = 560;
+    var leadLenght = 560, coeff = 0.6;
     var dx = pts[0].x - pts[1].x, dy = pts[0].y - pts[1].y;
     var l = Math.sqrt(dx * dx + dy * dy) - leadLenght * 2;
-    var path = 'M 0 0 h ' + l / 0.6;
+    var path = 'M 0 0 h ' + l / coeff;
+    if (l > 0) {
+      elem.find('[drag=area]').attr('width', l / coeff);
+    }
     // set view
     elem.attr('transform', trn);
     elem.find('[type=line]').each(function() {
@@ -1407,8 +1413,10 @@ window["breadboard"].dmmDialMoved = function(value) {
 
   /* board object */
 
-  var $ready = false; // flag, all critical objects built
-  var $stack = []; // stack of callback functions
+  // flag, all critical objects built
+  var $ready = false;
+  // stack of callback functions
+  var $stack = [];
 
   board.util.require(["sparks.breadboard.svg"], function(data) {
     paper = $(data["sparks.breadboard"]);
