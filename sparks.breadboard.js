@@ -189,6 +189,8 @@ window["breadboard"].dmmDialMoved = function(value) {
 
     // init all leads draggable
     primitive.prototype.initLeadDraggable(this);
+    // init all probes draggable
+    primitive.prototype.initProbeDraggable(this);
     // init all components draggable
     primitive.prototype.initComponentDraggable(this);
   };
@@ -927,11 +929,6 @@ window["breadboard"].dmmDialMoved = function(value) {
   };
 
   primitive.prototype.initProbeDraggable = function(board) {
-    if (primitive.prototype._initProbeDraggable) {
-      return;
-    }
-
-    // temp vars
     var active, lead_new, lead_old, lead_init, point;
     var s_pos, c_pos, x, y, dx, dy, coeff = 20;
 
@@ -1000,8 +997,6 @@ window["breadboard"].dmmDialMoved = function(value) {
         active = null;
       }
     }, false);
-
-    primitive.prototype._initProbeDraggable = true;
   };
 
   primitive.probe = function(board, params) {
@@ -1043,7 +1038,7 @@ window["breadboard"].dmmDialMoved = function(value) {
       }
     }
 
-    primitive.prototype.initProbeDraggable(board);
+    //primitive.prototype.initProbeDraggable(board);
   };
 
   primitive.probe.prototype.setState = function(lead) {
