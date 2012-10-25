@@ -316,11 +316,10 @@ window["breadboard"].dmmDialMoved = function(value) {
   };
 
   CircuitBoard.prototype.initMagnifier = function() {
-    var brd = this, x, y, t, hole, show_magnifier = false;
+    var brd = this, x, y, t, hole, show_magnifier = false, time;
 
     var holder = brd.holder[0], active = false, svghead;
     var dx, dy, z, r, pi2, wm, hm, wb, hb, sh, pos, old;
-    var h = "data:image/svg+xml;base64,";
 
     time = board.options.magnifier.time;
     hole = SVGStorage.hole;
@@ -348,7 +347,7 @@ window["breadboard"].dmmDialMoved = function(value) {
       'width': brd.holder.w + 'px' 
     }).appendTo(brd.holder);
 
-    var ctx = magnifier[0].getContext('2d');
+    var ctx = magnifier[0].getContext('2d'), buff, lead, elem;
 
     // create buff image of background and holes
     buff = context2d();
@@ -377,7 +376,7 @@ window["breadboard"].dmmDialMoved = function(value) {
             magnifier.show();
           }
         }, time);
-      };
+      }
       evt.preventDefault();
     }, false);
 
@@ -386,18 +385,17 @@ window["breadboard"].dmmDialMoved = function(value) {
       if (active && ((pos.x != old.x) || (pos.y != old.y))) {
         magnifier.draw();
         old = pos;
-      };
+      }
     }, false);
 
     holder.addEventListener( _mouseup, function(evt) {
       if (active) {
         show_magnifier = false;
-        elem_prev = elem;
         magnifier.hide();
         active = false;
         lead = null;
         elem = null;
-      };
+      }
     }, false);
 
     ctx.font = "bold 16px Arial";
@@ -428,14 +426,14 @@ window["breadboard"].dmmDialMoved = function(value) {
           ctx.arc(hole[i].x, hole[i].y, hole[i].r, 0, pi2, false);
           ctx.closePath();
           ctx.fill();
-        };
+        }
         ctx.restore();
       }
       ctx.drawImage(comp.canvas, x, y, wm, hm);
       ctx.drawImage(elem.image.update(), x, y, wm, hm);
 
       ctx.restore();
-      ctx.save()
+      ctx.save();
       ctx.strokeStyle = '#3c3c3c';
       ctx.shadowColor = '#000000';
       ctx.shadowOffsetX = 0;
@@ -463,7 +461,7 @@ window["breadboard"].dmmDialMoved = function(value) {
           this.drawImage(brd.itemslist[i].image.cnv.canvas, 0, 0, wm, hm);
         }
       }
-    }
+    };
 
     // debugging
     //comp.update();
@@ -496,7 +494,7 @@ window["breadboard"].dmmDialMoved = function(value) {
   };
 
   SVGImage.prototype.update = function() {
-    var ctx = this.cnv, elem = this.comp, path, trns;
+    var ctx = this.cnv, elem = this.comp, path, trns, p, l, i;
 
   // clear context, common part
     this.cnv.clearRect(0, 0, this.w, this.h);
@@ -505,17 +503,17 @@ window["breadboard"].dmmDialMoved = function(value) {
     this.cnv.scale(this.zoom, this.zoom);
 
   // draw leads, common part
-    for (var i = elem.leads.length; i--; ) {
+    for (i = elem.leads.length; i--; ) {
       path = elem.leads[i].state.path;
       trns = path[0].getCTM();
-      for (var p = 0, l = path.length; p < l; p++) {
+      for (p = 0, l = path.length; p < l; p++) {
         SVGImage.draw_path.call(this, ctx, path[p], trns);
       }
     }
 
   // draw connector, common part
     path = elem.connector.view.path;
-    for (var p = 0, l = path.length; p < l; p++) {
+    for (p = 0, l = path.length; p < l; p++) {
       trns =  path[p].getCTM();
       SVGImage.draw_path.call(this, ctx, path[p], trns);
     }
@@ -579,7 +577,7 @@ window["breadboard"].dmmDialMoved = function(value) {
     var t = getTransform(this.view.children().first().attr('transform'));
     this.ctx.transform(t[0], t[1], t[2], t[3], t[4], t[5]);
 
-    var path = this.view.path;
+    path = this.view.path;
     for (var p = 0, l = path.length; p < l; p++) {
       SVGImage.draw_path.call(this, this.ctx, path[p]);
     }
@@ -621,7 +619,7 @@ window["breadboard"].dmmDialMoved = function(value) {
   };
 
   SVGImage.resistor = function(elem) {
-    var path = this.comp.element.view.path, g, u, t;
+    var g, u, t, i, l;
 
     // set zoom transform
     this.ctx.scale(this.zoom, this.zoom);
@@ -640,13 +638,13 @@ window["breadboard"].dmmDialMoved = function(value) {
     u = g.children('use').not('[type="hint"]');
     this.ctx.save();
     this.ctx.translate(-94, -32);
-    for (var i = 0, l = u.length; i< l; i++) {
+    for (i = 0, l = u.length; i< l; i++) {
       SVGImage.draw_use.call(this, this.ctx, u[i]);
     }
     this.ctx.restore();
 
     g = g.children('g');
-    for (var i = 0, l = g.length; i< l; i++) {
+    for (i = 0, l = g.length; i< l; i++) {
       this.ctx.save();
 
       g[i] = $(g[i]);
@@ -729,7 +727,7 @@ window["breadboard"].dmmDialMoved = function(value) {
       if (c == "Z") {
         ctx.closePath();
       }
-    };
+    }
 
     if (str_c) {ctx.stroke();}
 
@@ -755,7 +753,7 @@ window["breadboard"].dmmDialMoved = function(value) {
     var y2 = parseFloat(f.attr('y2'), 10);
 
     var trn = (f[0].getAttribute('gradientTransform') || '')
-         .replace('\)','').replace('matrix\(','').split(' ');
+         .replace(/\)/,'').replace(/matrix\(/,'').split(' ');
 
     ctx.save();
 
@@ -765,17 +763,17 @@ window["breadboard"].dmmDialMoved = function(value) {
         parseFloat(trn[2], 10), parseFloat(trn[3], 10),
         parseFloat(trn[4], 10), parseFloat(trn[5], 10)
       );
-    };
+    }
 
     var grad = ctx.createLinearGradient(x1, y1, x2, y2);
 
     var s = f.children('stop'), i, l;
-    for (var i = 0, l = s.length; i < l; i++) {
+    for (i = 0, l = s.length; i < l; i++) {
       grad.addColorStop(
         parseFloat(s[i].getAttribute('offset'), 10) ,
         s[i].getAttribute('stop-color-rgba')
       );
-    };
+    }
 
     ctx.fillStyle = grad;
     ctx.fill();
@@ -789,7 +787,7 @@ window["breadboard"].dmmDialMoved = function(value) {
     var cy = parseFloat(f.attr('cy'), 10);
     var r = parseFloat(f.attr('r'), 10);
     var trn = (f[0].getAttribute('gradientTransform') || '')
-         .replace('\)','').replace('matrix\(','').split(' ');
+         .replace(/\)/,'').replace(/matrix\(/,'').split(' ');
 
     ctx.save();
 
@@ -799,17 +797,17 @@ window["breadboard"].dmmDialMoved = function(value) {
         parseFloat(trn[2], 10), parseFloat(trn[3], 10),
         parseFloat(trn[4], 10), parseFloat(trn[5], 10)
       );
-    };
+    }
 
     var grad = ctx.createRadialGradient(fx, fy, 0, cx, cy, r);
 
     var s = f.children('stop'), i, l;
-    for (var i = 0, l = s.length; i < l; i++) {
+    for (i = 0, l = s.length; i < l; i++) {
       grad.addColorStop(
         parseFloat(s[i].getAttribute('offset'), 10) ,
         s[i].getAttribute('stop-color-rgba')
       );
-    };
+    }
 
     ctx.fillStyle = grad;
     ctx.fill();
@@ -923,7 +921,7 @@ window["breadboard"].dmmDialMoved = function(value) {
   /* === #components begin === */
 
   component.prototype.init = function(params, holes, board) {
-    var loc = params["connections"].split(','), self = this;
+    var loc = params["connections"].split(',');
     this.pts = [holes[loc[0]], holes[loc[1]]];
     this.angle = getAngleBetwPoints(this.pts);
     this.leads = addLeads(this.pts, getDegsFromRad(this.angle), loc, params.UID, params.draggable, board);
@@ -992,8 +990,8 @@ window["breadboard"].dmmDialMoved = function(value) {
   /* === #primitive begin === */
 
   primitive.prototype.initComponentDraggable = function(board) {
-    var component, s_pos, c_pos, x = 0, y = 0, coeff = 25, i, dx, dy;
-    var l1, l2, ho1, ho2, hn1, hn2, begDiffX, c, deg, angle;
+    var component, s_pos, c_pos, x = 0, y = 0, coeff = 25, dx, dy;
+    var l1, l2, ho1, ho2, hn1, hn2, c, deg, angle;
     var hi1, hi2;
     var p1 = {
       x : 0,
@@ -1004,98 +1002,103 @@ window["breadboard"].dmmDialMoved = function(value) {
     }, pts = [p2, p1];
 
     board.holder[0].addEventListener(_mousedown, function(evt) {
-      component = $(evt._target).data('component') || null;
-      if (component) {
-        s_pos = getCoords(evt, board.holder);
+      if (!evt.touches || evt.touches.length == 1) {
+        component = $(evt._target).data('component') || null;
+        if (component) {
+          s_pos = getCoords(evt, board.holder);
 
-        l1 = component.leads[0];
-        l2 = component.leads[1];
+          l1 = component.leads[0];
+          l2 = component.leads[1];
 
-        p1.x = l1.x;
-        p1.y = l1.y;
-        p2.x = l2.x;
-        p2.y = l2.y;
+          p1.x = l1.x;
+          p1.y = l1.y;
+          p2.x = l2.x;
+          p2.y = l2.y;
 
-        ho1 = component.hole[0].highlight();
-        ho2 = component.hole[1].highlight();
-        hi1 = hn1 = ho1;
-        hi2 = hn2 = ho2;
+          ho1 = component.hole[0].highlight();
+          ho2 = component.hole[1].highlight();
+          hi1 = hn1 = ho1;
+          hi2 = hn2 = ho2;
 
-        board.toFront(component);
-        evt.preventDefault();
+          board.toFront(component);
+          evt.preventDefault();
+        }
       }
-      //
     }, false);
 
     board.holder[0].addEventListener(_mousemove, function(evt) {
-      if (component) {
-        c_pos = getCoords(evt, board.holder);
-        dx = c_pos.x - s_pos.x;
-        dy = c_pos.y - s_pos.y;
-        x = component.x + dx * coeff;
-        y = component.y + dy * coeff;
-        // update view of component
-        component.view.attr('transform', 'translate(' + x + ',' + y + ')');
-        // highlight nearest holes
-        p1.x = l1.x + dx * coeff;
-        p1.y = l1.y + dy * coeff;
-        p2.x = l2.x + dx * coeff;
-        p2.y = l2.y + dy * coeff;
-        hn1 = board.holes.find(p1);
-        hn2 = board.holes.find(p2);
-        if (hi1 || hi2) {
-          hi1.disconnected().highlight();
-          hi2.disconnected().highlight();
-          hi1 = hi2 = null;
-          // sent event to model
-          if (l1.state != l1.view_d) {
-            l1.board.sendEventToModel("connectionBroken", [l1.name, l1.hole]);
+      if (!evt.touches || evt.touches.length == 1) {
+        if (component) {
+          c_pos = getCoords(evt, board.holder);
+          dx = c_pos.x - s_pos.x;
+          dy = c_pos.y - s_pos.y;
+          x = component.x + dx * coeff;
+          y = component.y + dy * coeff;
+          // update view of component
+          component.view.attr('transform', 'translate(' + x + ',' + y + ')');
+          // highlight nearest holes
+          p1.x = l1.x + dx * coeff;
+          p1.y = l1.y + dy * coeff;
+          p2.x = l2.x + dx * coeff;
+          p2.y = l2.y + dy * coeff;
+          hn1 = board.holes.find(p1);
+          hn2 = board.holes.find(p2);
+          if (hi1 || hi2) {
+            hi1.disconnected().highlight();
+            hi2.disconnected().highlight();
+            hi1 = hi2 = null;
+            // sent event to model
+            if (l1.state != l1.view_d) {
+              l1.board.sendEventToModel("connectionBroken", [l1.name, l1.hole]);
+            }
+            if (l2.state != l2.view_d) {
+              l2.board.sendEventToModel("connectionBroken", [l2.name, l2.hole]);
+            }
           }
-          if (l2.state != l2.view_d) {
-            l2.board.sendEventToModel("connectionBroken", [l2.name, l2.hole]);
+          if (hn1 != ho1) {
+            ho1.unhighlight();
+            ho1 = hn1.highlight();
           }
-        }
-        if (hn1 != ho1) {
-          ho1.unhighlight();
-          ho1 = hn1.highlight();
-        }
-        if (hn2 != ho2) {
-          ho2.unhighlight();
-          ho2 = hn2.highlight();
+          if (hn2 != ho2) {
+            ho2.unhighlight();
+            ho2 = hn2.highlight();
+          }
         }
       }
     }, false);
 
     board.holder[0].addEventListener(_mouseup, function(evt) {
-      if (component) {
-        // snap to nearest holes
-        component.hole[0] = hn1;
-        component.hole[1] = hn2;
-        l1.hole = hn1.name;
-        l2.hole = hn2.name;
-        component.x = 0;
-        component.y = 0;
-        // update all primitives
-        p1.x = l1.x = hn1.x;
-        p1.y = l1.y = hn1.y;
-        p2.x = l2.x = hn2.x;
-        p2.y = l2.y = hn2.y;
-        // update view
-        hn1.unhighlight();
-        hn2.unhighlight();
-        if (!hi1) {
-          hn1.connected();
-          l1.connect();
+      if (!evt.touches || evt.touches.length === 0) {
+        if (component) {
+          // snap to nearest holes
+          component.hole[0] = hn1;
+          component.hole[1] = hn2;
+          l1.hole = hn1.name;
+          l2.hole = hn2.name;
+          component.x = 0;
+          component.y = 0;
+          // update all primitives
+          p1.x = l1.x = hn1.x;
+          p1.y = l1.y = hn1.y;
+          p2.x = l2.x = hn2.x;
+          p2.y = l2.y = hn2.y;
+          // update view
+          hn1.unhighlight();
+          hn2.unhighlight();
+          if (!hi1) {
+            hn1.connected();
+            l1.connect();
+          }
+          if (!hi2) {
+            hn2.connected();
+            l2.connect();
+          }
+          updateComponentView();
+          // reset temp variables
+          component = null;
+          hn1 = null;
+          hn2 = null;
         }
-        if (!hi2) {
-          hn2.connected();
-          l2.connect();
-        }
-        updateComponentView();
-        // reset temp variables
-        component = null;
-        hn1 = null;
-        hn2 = null;
       }
     }, false);
 
@@ -1118,9 +1121,9 @@ window["breadboard"].dmmDialMoved = function(value) {
   };
 
   primitive.prototype.initLeadDraggable = function(board) {
-    var lead_this, lead_pair, component, view, coeff = 25;
+    var lead_this, lead_pair, component, coeff = 25;
     // coeff = 1 / (0.05*0.8)
-    var bbox, s_pos, c_pos, x, y, dx, dy, pts, angle, c;
+    var s_pos, c_pos, dx, dy, pts, angle, c;
     var p1 = {
       x : 0,
       y : 0
@@ -1130,73 +1133,79 @@ window["breadboard"].dmmDialMoved = function(value) {
     }, deg, hi, ho, hn;
 
     board.holder[0].addEventListener(_mousedown, function(evt) {
-      lead_this = $(evt.target).data('primitive-lead') || null;
-      if (lead_this) {
-        component = board.component[lead_this.name];
-        lead_pair = findLeadPair(component, lead_this);
-        hi = board.holes.find(lead_this).highlight();
-        hn = ho = hi;
-        s_pos = getCoords(evt, board.holder);
-        p2.x = lead_pair.x;
-        p2.y = lead_pair.y;
-        pts = (lead_this.orientation == 1) ? [p1, p2] : [p2, p1];
-        evt.preventDefault();
+      if (!evt.touches || evt.touches.length == 1) {
+        lead_this = $(evt.target).data('primitive-lead') || null;
+        if (lead_this) {
+          component = board.component[lead_this.name];
+          lead_pair = findLeadPair(component, lead_this);
+          hi = board.holes.find(lead_this).highlight();
+          hn = ho = hi;
+          s_pos = getCoords(evt, board.holder);
+          p2.x = lead_pair.x;
+          p2.y = lead_pair.y;
+          pts = (lead_this.orientation == 1) ? [p1, p2] : [p2, p1];
+          evt.preventDefault();
+        }
       }
     }, false);
 
     board.holder[0].addEventListener(_mousemove, function(evt) {
-      if (lead_this) {
-        // calc move params
-        c_pos = getCoords(evt, board.holder);
-        dx = c_pos.x - s_pos.x;
-        dy = c_pos.y - s_pos.y;
-        p1.x = lead_this.x + dx * coeff;
-        p1.y = lead_this.y + dy * coeff;
-        // update view of component
-        updateComponentView();
-        // update flag for hover events
-        lead_this.isDragged = true;
-        // find the nearest hole
-        hn = board.holes.find(p1);
-        board.hole_target = hn;
-        if (hi) {
-          hi.disconnected().highlight();
-          hi = null;
-          // sent event to model
-          if (lead_this.state != lead_this.view_d) {
-            lead_this.board.sendEventToModel("connectionBroken", [lead_this.name, lead_this.hole]);
+      if (!evt.touches || evt.touches.length == 1) {
+        if (lead_this) {
+          // calc move params
+          c_pos = getCoords(evt, board.holder);
+          dx = c_pos.x - s_pos.x;
+          dy = c_pos.y - s_pos.y;
+          p1.x = lead_this.x + dx * coeff;
+          p1.y = lead_this.y + dy * coeff;
+          // update view of component
+          updateComponentView();
+          // update flag for hover events
+          lead_this.isDragged = true;
+          // find the nearest hole
+          hn = board.holes.find(p1);
+          board.hole_target = hn;
+          if (hi) {
+            hi.disconnected().highlight();
+            hi = null;
+            // sent event to model
+            if (lead_this.state != lead_this.view_d) {
+              lead_this.board.sendEventToModel("connectionBroken", [lead_this.name, lead_this.hole]);
+            }
           }
-        }
-        if (hn != ho) {
-          ho.unhighlight();
-          ho = hn.highlight();
+          if (hn != ho) {
+            ho.unhighlight();
+            ho = hn.highlight();
+          }
         }
       }
     }, false);
 
     board.holder[0].addEventListener(_mouseup, function(evt) {
-      if (lead_this) {
-        lead_this.isDragged = false;
-        lead_this.x = p1.x = hn.x;
-        lead_this.y = p1.y = hn.y;
-        lead_this.hole = hn.name;
-        component.hole[0] = board.holes[lead_this.hole];
-        component.hole[1] = board.holes[lead_pair.hole];
-        updateComponentView();
-        hn.unhighlight();
-        if (!hi) {
-          lead_this.connect();
-          hn.connected();
+      if (!evt.touches || evt.touches.length === 0) {
+        if (lead_this) {
+          lead_this.isDragged = false;
+          lead_this.x = p1.x = hn.x;
+          lead_this.y = p1.y = hn.y;
+          lead_this.hole = hn.name;
+          component.hole[0] = board.holes[lead_this.hole];
+          component.hole[1] = board.holes[lead_pair.hole];
+          updateComponentView();
+          hn.unhighlight();
+          if (!hi) {
+            lead_this.connect();
+            hn.connected();
+          }
+          // reset temp links
+          hn = null;
+          ho = null;
+          lead_this = null;
+          lead_pair = null;
         }
-        // reset temp links
-        hn = null;
-        ho = null;
-        lead_this = null;
-        lead_pair = null;
-      }
-      if ($(evt.target).data('component-lead')) {
-        var name = $(evt.target).data('component-lead');
-        board.component[name].image.update();
+        if ($(evt.target).data('component-lead')) {
+          var name = $(evt.target).data('component-lead');
+          board.component[name].image.update();
+        }
       }
     }, false);
 
@@ -1807,7 +1816,7 @@ window["breadboard"].dmmDialMoved = function(value) {
 
   var context2d = function() {
     return document.createElement('canvas').getContext('2d');
-  }
+  };
   var addLeads = function(pts, angle, loc, name, drag, board) {
     var leads = ["right", "left"], angles = [];
     angles = ($.isArray(angle)) ? [angle[0], angle[1]] : [angle, angle];
@@ -1948,17 +1957,15 @@ window["breadboard"].dmmDialMoved = function(value) {
   /* === #utils stop === */
 
   var SVGStorage = function(data) {
-    var ctxm, ctx1, ctx2, img1, img2, all = 2;
     var h = "data:image/svg+xml;base64,";
     var self = this, svg, a, b;
 
-    var t = new Date().getTime();
     // create all image data resources
     this.info = {
       'svghead': data.match(/<svg[^>]*>/)[0] ,
       'boardhl': new Image(),
       'svghole': ''
-    }
+    };
     // board with holes
     a = data.search('<!-- breadboard start -->');
     b = data.search('<!-- breadboard end -->');
@@ -2020,7 +2027,7 @@ window["breadboard"].dmmDialMoved = function(value) {
     var cache = function(image) {
       var img = new Image();
       img.onload = function() {
-        opt = {
+        var opt = {
           'id': image.getAttribute('id'),
           'x': image.getAttribute('x'),
           'y': image.getAttribute('y')
@@ -2028,7 +2035,7 @@ window["breadboard"].dmmDialMoved = function(value) {
         check(img, opt);
       };
       img.src = image.getAttribute('xlink:href');
-    }
+    };
     for (var i = 0; i < all; i++) {
       cache(stack[i]);
     }
@@ -2042,7 +2049,7 @@ window["breadboard"].dmmDialMoved = function(value) {
       SVGStorage.defs[opt.id].ox = opt.x;
       SVGStorage.defs[opt.id].oy = opt.y;
       if (!--all) {start_activity();}
-    }
+    };
 
     // run callbacks, if have been signed 
     var start_activity = function() {
@@ -2050,7 +2057,7 @@ window["breadboard"].dmmDialMoved = function(value) {
       for (var i = 0, l = $stack.length; i < l; i++) {
         $stack[i]();
       }
-    }
+    };
 
   });
 
