@@ -197,6 +197,8 @@ window["breadboard"].dmmDialMoved = function(value) {
     this.multimeter = null;
     // battery
     this.battery = null;
+    // probes
+    this.probes = [];
 
     // init all leads draggable
     primitive.prototype.initLeadDraggable(this);
@@ -234,6 +236,8 @@ window["breadboard"].dmmDialMoved = function(value) {
   CircuitBoard.prototype.addDMM = function(params) {
     if (!this.multimeter) {
       this.multimeter = new equipment.multimeter(this, params);
+      this.probes.push(this.multimeter.probe['black']);
+      this.probes.push(this.multimeter.probe['red']);
     }
     this.multimeter.probe['black'].view.show();
     this.multimeter.probe['red'].view.show();
@@ -289,6 +293,8 @@ window["breadboard"].dmmDialMoved = function(value) {
   CircuitBoard.prototype.addOScope = function(params) {
     if (!this.oscope) {
       this.oscope = new equipment.oscope(this, params);
+      this.probes.push(this.oscope.probe['yellow']);
+      this.probes.push(this.oscope.probe['pink']);
     }
     this.oscope.probe['yellow'].view.show();
     this.oscope.probe['pink'].view.show();
@@ -461,6 +467,9 @@ window["breadboard"].dmmDialMoved = function(value) {
         if (brd.itemslist[i] != elem ) {
           this.drawImage(brd.itemslist[i].image.cnv.canvas, 0, 0, wm, hm);
         }
+      }
+      for (var p = 0, d = brd.probes.length; p < d; p++ ) {
+        this.drawImage(brd.probes[p].image.cnv.canvas, 0, 0, wm, hm);
       }
     };
 
@@ -669,6 +678,116 @@ window["breadboard"].dmmDialMoved = function(value) {
     // debugging
     //this.ctx.canvas.style.border = "1px solid red";
     //document.body.appendChild(this.ctx.canvas);
+  };
+
+  SVGImage.probe = function(brd, elem) {
+    // main model
+    this.view = elem.view;
+    this.cnv = context2d();
+    this.ctx = context2d();
+
+    // calc most used variables
+    this.ozoom = 1 / board.options.magnifier.zoom;
+    this.zoom = board.options.magnifier.zoom;
+    this.w = brd.holder.w * this.zoom;
+    this.h = brd.holder.h * this.zoom;
+
+    // set dimention (w * h) for canvas
+    this.cnv.canvas.height = this.ctx.canvas.height = this.h;
+    this.cnv.canvas.width = this.ctx.canvas.width = this.w;
+
+    // add pattern image of element
+    SVGImage.probe.template.call(this);
+
+    // update
+    this.update();
+  };
+
+  SVGImage.probe.prototype.update = function() {
+    // clear context, common part
+    this.cnv.clearRect(0, 0, this.w, this.h);
+    this.cnv.save();
+
+    // set real transforms
+    this.cnv.scale(this.zoom, this.zoom);
+    this.cnv.transform(0.05, 0, 0, 0.05, 0, -100);
+    var t = this.view.attr('transform');
+    if (t) {
+      t = getTransform(t);
+      this.cnv.translate(t[0], t[1]);
+    }
+
+    t = this.view.children().attr('transform');
+    if (t) {
+      t = getTransform(t);
+      this.cnv.translate(t[0], t[1]);
+    }
+
+    t = this.view.children().children().attr('transform');
+    t = getTransform(t);
+
+    // set reversed transforms
+    this.cnv.translate(this.rt[0], this.rt[1]);
+    this.cnv.transform(20, 0, 0, 20, 0, 2000);
+    this.cnv.scale(this.ozoom, this.ozoom);
+
+    // draw template image
+    this.cnv.drawImage(this.ctx.canvas, 0, 0, this.w, this.h);
+
+    // debugging
+    //this.cnv.canvas.style.border = "1px solid blue";
+    //document.body.appendChild(this.cnv.canvas);
+
+    this.cnv.restore();
+    return this.cnv.canvas;
+  };
+
+  SVGImage.probe.template = function() {
+    var t = this.view.attr('transform-full-visibility');
+    t = getTransform(t);
+
+    this.ctx.save();
+    // add pattern image of element
+    this.ctx.scale(this.zoom, this.zoom);
+    this.ctx.transform(0.05, 0, 0, 0.05, 0, -100);
+    this.ctx.translate(t[0], t[1]);
+
+    // draw all elements, skip type="initial". used as (0, 0)
+    this.view.children().children().each(
+      SVGImage.probe.template_draw(this.ctx)
+    );
+    this.ctx.restore();
+
+    // save reversed transform, for update
+    this.rt = [-t[0], -t[1]];
+
+    // debugging
+    //this.ctx.canvas.style.border = "1px solid blue";
+    //document.body.appendChild(this.ctx.canvas);
+  };
+
+  SVGImage.probe.template_draw = function(ctx) {
+    return function() {
+      var elem = $(this), name = this.nodeName.toLowerCase();
+      if (name == 'g') {
+        ctx.save();
+        var t = this.getAttribute('transform');
+        if (t) {
+          
+          t = getTransform(t);
+          ctx.transform(t[0], t[1], t[2], t[3], t[4], t[5]);
+        }
+        //console.log('g >> ', this.getAttribute('transform'));
+        elem.children().each(
+          SVGImage.probe.template_draw(ctx)
+        );
+        ctx.restore();
+      } else
+      if (name == 'path') {
+        //console.log('path >> ', this.getAttribute('transform'))
+        SVGImage.draw_path(ctx, this);
+      }
+    };
   };
 
   SVGImage.draw_use = function(ctx, use, trn) {
@@ -1563,6 +1682,7 @@ window["breadboard"].dmmDialMoved = function(value) {
           } else if (active.lead) {
             active.lead = null;
           }
+          active.image.update();
           active = null;
         }
       }
@@ -1600,6 +1720,7 @@ window["breadboard"].dmmDialMoved = function(value) {
     this.view.show = self.show;
     this.view.hide = self.hide;
     this.view.data('primitive-probe', this);
+    this.image = new SVGImage.probe(board, this);
 
     if (params.connection) {// snap to lead
       calcLeadsBBox.call(board);
