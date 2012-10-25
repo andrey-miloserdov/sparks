@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <script type="text/javascript" src="libs/jquery-latest.min.js"></script>
     <script type="text/javascript" src="sparks.breadboard.js"></script>
-    <link rel="stylesheet" type="text/css" href="sparks.breadboard.css">
   </head>
   <body style="margin: 0px; padding: 0px;">
     <div id="container" style="width: 800px; height: 500px;">
@@ -41,7 +40,8 @@
             "UID" : "r1",
             "connections" : "j30,j1",
             "label" : "R5",
-            "color" : ['silver', 'brown', 'grey', 'orange']
+            "color" : ['silver', 'brown', 'grey', 'orange'],
+            "draggable" : true
           });
           circuit.addComponent({
             "type" : "resistor",
@@ -54,33 +54,36 @@
           circuit.addComponent({
             "type" : "capacitor",
             "UID" : "c1",
-            "connections" : "e30,e10",
+            "connections" : "e10,j30",
             "label" : "C1",
             "color" : "rgb(0,0,255)",
             "draggable" : true
           });
           circuit.addBattery("left_negative21,left_positive21");
           circuit.addDMM({
-            "dial": "acv_200",
-            "black":{
-            "connection": "f23",
-            "draggable": true
-          },"red": {
-            "connection": "h3",
-            "draggable": false            
-          }
+            "dial" : "acv_200",
+            "black" : {
+              "connection" : "f23",
+              "draggable" : true
+            },
+            "red" : {
+              "connection" : "h3",
+              "draggable" : false
+            }
           });
           circuit.addOScope({
-            "yellow":{
-            "connection": "left_positive21",
-            "draggable": true
-          },"pink": {
-            "connection": "h28",
-            "draggable": true            
-          }
+            "yellow" : {
+              "connection" : "left_positive21",
+              "draggable" : true
+            },
+            "pink" : {
+              "connection" : "h28",
+              "draggable" : true
+            }
           });
+          circuit.initMagnifier();
         };
-
+        
         breadboard.ready(function() {
           create_board();
         });

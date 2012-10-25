@@ -15,3 +15,13 @@
   user-select: none;
   cursor: default;
 }
+
+.circuit-board .magnifier {
+  position: absolute;
+  display: none;
+  left: 0px;
+  top: 0px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}

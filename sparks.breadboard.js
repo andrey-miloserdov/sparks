@@ -4,7 +4,16 @@
 
 window["breadboard"] = {
   "options" : {
-    "rootpath" : ""
+    "rootpath" : "",
+    "magnifier" : {
+      "time": 400,
+      "size": 60,
+      "zoom": 2,
+      "offset": {
+        "x": 40,
+        "y": 40
+      }
+    }
   },
   "util" : {}
 };
@@ -154,6 +163,8 @@ window["breadboard"].dmmDialMoved = function(value) {
     this.holder = $('#' + id).html('').append(
       SVGStorage.create('board')
     ).addClass('circuit-board');
+    this.holder.h = this.holder.height();
+    this.holder.w = this.holder.width();
 
     this.workspace = this.holder.find("[item=components]");
     this.holes = {
@@ -205,6 +216,7 @@ window["breadboard"].dmmDialMoved = function(value) {
     this.component[elem["UID"]]["id"] = elem["UID"];
     this.itemslist.push(this.component[elem["UID"]]);
     this.workspace.append(this.component[elem["UID"]].view);
+    this.component[elem["UID"]]["image"] = new SVGImage(this, elem["UID"]);
   };
 
   CircuitBoard.prototype.removeComponent = function(id) {
@@ -245,14 +257,19 @@ window["breadboard"].dmmDialMoved = function(value) {
   };
 
   CircuitBoard.prototype.addBattery = function(connections) {
+    var type = "battery";
+
     if (!this.battery) {
       this.battery = new equipment.battery(this, connections);
-      this.workspace.append(this.battery.blackWire, this.battery.redWire);
+      this.workspace.append(this.battery.view);
       this.itemslist.push(this.battery);
+
+      this.component[type] = this.battery;
+      this.battery["type"] = type;
+      this.battery["image"] = new SVGImage(this, type);
     }
+
     this.battery.btbox.view.show();
-    this.battery.blackWire.show();
-    this.battery.redWire.show();
 
     this.battery.pts[0].connected();
     this.battery.pts[1].connected();
@@ -283,18 +300,532 @@ window["breadboard"].dmmDialMoved = function(value) {
   };
 
   CircuitBoard.prototype.toFront = function(component) {
+    var self = this, redrawId;
     // resolve crash in Google Chrome by changing environment
-    var self = this;
     setTimeout(function() {
       var i = component.view.index();
-      var redrawId = component.view[0].ownerSVGElement.suspendRedraw(50);
+      if (component.view[0].ownerSVGElement.suspendRedraw) { // IE9 out
+        redrawId = component.view[0].ownerSVGElement.suspendRedraw(50);
+      }
       // use prepend to avoid crash in iOS
       self.workspace.prepend(component.view.parent().children(':gt(' + i + ')'));
-      component.view[0].ownerSVGElement.unsuspendRedraw(redrawId);
+      if (component.view[0].ownerSVGElement.unsuspendRedraw) { // IE9 out
+        component.view[0].ownerSVGElement.unsuspendRedraw(redrawId);
+      }
     }, 50);
   };
 
+  CircuitBoard.prototype.initMagnifier = function() {
+    var brd = this, x, y, t, hole, show_magnifier = false;
+
+    var holder = brd.holder[0], active = false, svghead;
+    var dx, dy, z, r, pi2, wm, hm, wb, hb, sh, pos, old;
+    var h = "data:image/svg+xml;base64,";
+
+    time = board.options.magnifier.time;
+    hole = SVGStorage.hole;
+    svghead = SVGStorage.info.svghead;
+    dx = board.options.magnifier.offset.x;
+    dy = board.options.magnifier.offset.y;
+    z = board.options.magnifier.zoom;
+    r = board.options.magnifier.size;
+    hm = brd.holder.h * z;
+    wm = brd.holder.w * z;
+    sh = 60 * z;
+    hb = hm - sh;
+    wb = wm;
+
+    // not active components buffer
+    var comp = context2d();
+    comp.canvas.height = hm;
+    comp.canvas.width = wm;
+
+    pi2 = Math.PI * 2;
+    z--; // for event;
+
+    var magnifier = $('<canvas class="magnifier">').attr({
+      'height': brd.holder.h + 'px',
+      'width': brd.holder.w + 'px' 
+    }).appendTo(brd.holder);
+
+    var ctx = magnifier[0].getContext('2d');
+
+    // create buff image of background and holes
+    buff = context2d();
+    buff.canvas.height = hm;
+    buff.canvas.width = wm;
+    buff.fillStyle = '#999181';
+    buff.rect(0, 0, wb, sh), buff.fill();
+    buff.drawImage(SVGStorage.defs[':bg-green-board'], 0, sh, wb, hb);
+    buff.drawSvg( SVGStorage.info.svghole, 0, 0, wm, hm );
+    buff.fill();
+    //window.document.body.appendChild(ctx.canvas);
+
+    // set default style for canvas context2d object
+
+    holder.addEventListener( _mousedown, function(evt) {
+      lead = $(evt.target).data('primitive-lead') || null;
+      if (lead) {
+        //var t = new Date().getTime();
+        elem = brd.component[lead.name];
+        comp.update(elem);
+        //console.log(new Date().getTime() - t);
+        old = pos = getCoords(evt, brd.holder);
+        magnifier.draw();
+        active = true;
+        show_magnifier = true;
+        setTimeout(function() {
+          if (show_magnifier) {
+            magnifier.show();
+          }
+        }, time);
+      };
+      evt.preventDefault();
+    }, false);
+
+    holder.addEventListener( _mousemove, function(evt) {
+      pos = getCoords(evt, brd.holder);
+      if (active && ((pos.x != old.x) || (pos.y != old.y))) {
+        magnifier.draw();
+        old = pos;
+      };
+    }, false);
+
+    holder.addEventListener( _mouseup, function(evt) {
+      if (active) {
+        show_magnifier = false;
+        elem_prev = elem;
+        magnifier.hide();
+        active = false;
+        lead = null;
+        elem = null;
+      };
+    }, false);
+
+    ctx.font = "bold 16px Arial";
+
+    magnifier.draw = function() {
+      ctx.save();
+      ctx.clearRect(0, 0, brd.holder.w, brd.holder.h);
+
+      ctx.beginPath();
+      ctx.arc(pos.x-dx, pos.y-dy, r, 0, pi2, false);
+      ctx.closePath();
+      ctx.fill();
+      ctx.clip();
+
+      x = -z*pos.x - dx;
+      y = -z*pos.y - dy;
+
+      ctx.drawImage(buff.canvas, x, y, wm, hm);
+      if (brd.hole_target) {
+        ctx.save();
+        t = brd.hole_target.view[0].getCTM();
+        ctx.translate(x, y);
+        ctx.scale(z + 1, z + 1);
+        ctx.transform(t.a, t.b, t.c, t.d, t.e, t.f);
+        for (var i = 0, l = hole.length; i < l; i++) {
+          ctx.fillStyle = hole[i].c;
+          ctx.beginPath();
+          ctx.arc(hole[i].x, hole[i].y, hole[i].r, 0, pi2, false);
+          ctx.closePath();
+          ctx.fill();
+        };
+        ctx.restore();
+      }
+      ctx.drawImage(comp.canvas, x, y, wm, hm);
+      ctx.drawImage(elem.image.update(), x, y, wm, hm);
+
+      ctx.restore();
+      ctx.save()
+      ctx.strokeStyle = '#3c3c3c';
+      ctx.shadowColor = '#000000';
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.shadowBlur = 8;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(pos.x-dx, pos.y-dy, r, 0, pi2, false);
+      ctx.closePath();
+      ctx.stroke();
+      if (brd.hole_target) {
+        ctx.save();
+        ctx.fillStyle = "#00ff00";
+        ctx.fillText(brd.hole_target.name, pos.x - r*2 + dx, pos.y - r*2 + dy);
+        ctx.restore();
+      }
+      ctx.restore();
+
+    };
+
+    comp.update = function(elem) {
+      this.clearRect(0, 0, wm, hm);
+      for (var i = 0, l = brd.itemslist.length; i < l; i++) {
+        //console.log(brd.itemslist[i].type);
+        if (brd.itemslist[i] != elem ) {
+          this.drawImage(brd.itemslist[i].image.cnv.canvas, 0, 0, wm, hm);
+        }
+      }
+    }
+
+    // debugging
+    //comp.update();
+    //comp.canvas.style.border = '1p solir red';
+    //document.body.appendChild(comp.canvas);
+  };
+
+  var SVGImage = function(brd, uid) {
+    this.comp = brd.component[uid];
+    this.brd = brd;
+    // main model
+    this.view = this.comp.element.view;
+    this.cnv = context2d();
+    this.ctx = context2d();
+
+    // calc most used variables
+    this.ozoom = 1 / board.options.magnifier.zoom;
+    this.zoom = board.options.magnifier.zoom;
+    this.w = this.brd.holder.w * this.zoom;
+    this.h = this.brd.holder.h * this.zoom;
+
+    // set dimention (w * h) for canvas
+    this.cnv.canvas.height = this.ctx.canvas.height = this.h;
+    this.cnv.canvas.width = this.ctx.canvas.width = this.w;
+
+    // add pattern image of element
+    SVGImage[this.comp.type].call(this);
+
+    //var t = new Date().getTime();
+    this.update();
+    //console.log(new Date().getTime() - t)
+  };
+
+  SVGImage.prototype.update = function() {
+    var ctx = this.cnv, elem = this.comp, path, trns;
+
+  // clear context, common part
+    this.cnv.clearRect(0, 0, this.w, this.h);
+    this.cnv.save();
+  // set zoom transform, common part
+    this.cnv.scale(this.zoom, this.zoom);
+
+  // draw leads, common part
+    for (var i = elem.leads.length; i--; ) {
+      path = elem.leads[i].state.path;
+      trns = path[0].getCTM();
+      for (var p = 0, l = path.length; p < l; p++) {
+        SVGImage.draw_path.call(this, ctx, path[p], trns);
+      }
+    }
+
+  // draw connector, common part
+    path = elem.connector.view.path;
+    for (var p = 0, l = path.length; p < l; p++) {
+      trns =  path[p].getCTM();
+      SVGImage.draw_path.call(this, ctx, path[p], trns);
+    }
+
+  // draw pattern, spetial part
+    this.cnv.save();
+    // set reversed transforms
+    this.cnv.transform(0.05, 0, 0, 0.05, 0, -50);
+    this.cnv.transform(0.8, 0, 0, 0.8, 0, 0);
+    // set real transform
+
+    var t = this.view.attr('transform');
+    // fix bug in IE with transforms    
+    t = t.replace(/\) rotate/g,')#rotate')
+      .replace(/ /g,',').replace(/#/, ' ');
+    t = t.split(' ');
+    var t1 = getTransform(t[0]);
+    var t2 = getTransform(t[1]);
+    this.cnv.translate(t1[0], t1[1]);
+    this.cnv.translate(t2[1], t2[2]);
+    this.cnv.rotate(t2[0]*Math.PI/180);
+    this.cnv.translate(-t2[1], -t2[2]);
+    // set reversed spetial transform
+    this.cnv.translate(-5000, -5000);
+    // set other reversed transforms
+    this.cnv.transform(1.25, 0, 0, 1.25, 0, 0);
+    this.cnv.transform(20, 0, 0, 20, 0, 1000);
+    this.cnv.scale(this.ozoom, this.ozoom);
+    // draw pattern element
+    this.cnv.drawImage(this.ctx.canvas, 0, 0, this.w, this.h);
+    // restore context
+    this.cnv.restore();
+
+    // debugging
+    //this.cnv.canvas.style.border = "1px solid blue";
+    //document.body.appendChild(this.cnv.canvas);
+
+    this.cnv.restore();
+    return this.cnv.canvas;
+  };
+
+  SVGImage.wire = function(elem) {
+    // Nothing to do
+  };
+
+  SVGImage.battery = function(elem) {
+    // Nothing to do
+  };
+
+  SVGImage.capacitor = function(elem) {
+    var path = this.comp.element.view.path;
+
+    // set zoom transform
+    this.ctx.scale(this.zoom, this.zoom);
+    // set transform from svg (just copy by hand)
+    this.ctx.transform(0.05, 0, 0, 0.05, 0, -50);
+    this.ctx.transform(0.8, 0, 0, 0.8, 0, 0);
+    // set spetial transform, to make element visible on canvas
+    this.ctx.translate(5000, 5000);
+    // set this element group transform
+    var t = getTransform(this.view.children().first().attr('transform'));
+    this.ctx.transform(t[0], t[1], t[2], t[3], t[4], t[5]);
+
+    var path = this.view.path;
+    for (var p = 0, l = path.length; p < l; p++) {
+      SVGImage.draw_path.call(this, this.ctx, path[p]);
+    }
+
+    // debugging
+    //this.ctx.canvas.style.border = "1px solid red";
+    //document.body.appendChild(this.ctx.canvas);
+  };
+
+  SVGImage.inductor = function(elem) {
+    var path = this.comp.element.view.path, g, t;
+
+    // set zoom transform
+    this.ctx.scale(this.zoom, this.zoom);
+    // set transform from svg (just copy by hand)
+    this.ctx.transform(0.05, 0, 0, 0.05, 0, -50);
+    this.ctx.transform(0.8, 0, 0, 0.8, 0, 0);
+    // set spetial transform, to make element visible on canvas
+    this.ctx.translate(5000, 5000);
+    // set this element group transform
+
+    g = this.view.children();
+    t = getTransform(g.attr('transform'));
+    this.ctx.transform(t[0], t[1], t[2], t[3], t[4], t[5]);
+
+    g = this.view.children().children().not('[type="label"]');
+    for (var i = 0, l = g.length; i< l; i++) {
+      t = getTransform(g[i].getAttribute('transform'));
+      this.ctx.save();
+      this.ctx.transform(t[0], t[1], t[2], t[3], t[4], t[5]);
+      path = $(g[i]).children()[0];
+      SVGImage.draw_path.call(this, this.ctx, path);
+      this.ctx.restore();
+    }
+
+    // debugging
+    //this.ctx.canvas.style.border = "1px solid red";
+    //document.body.appendChild(this.ctx.canvas);
+  };
+
+  SVGImage.resistor = function(elem) {
+    var path = this.comp.element.view.path, g, u, t;
+
+    // set zoom transform
+    this.ctx.scale(this.zoom, this.zoom);
+    // set transform from svg (just copy by hand)
+    this.ctx.transform(0.05, 0, 0, 0.05, 0, -50);
+    this.ctx.transform(0.8, 0, 0, 0.8, 0, 0);
+    // set spetial transform, to make element visible on canvas
+    this.ctx.translate(5000, 5000);
+    // set this element group transform
+
+    this.ctx.transform(15, 0, 0, 15, 0, 150);
+    this.ctx.scale(0.6, 0.6);
+
+    g = this.view.children().children().not('[type="label"]');
+
+    u = g.children('use').not('[type="hint"]');
+    this.ctx.save();
+    this.ctx.translate(-94, -32);
+    for (var i = 0, l = u.length; i< l; i++) {
+      SVGImage.draw_use.call(this, this.ctx, u[i]);
+    }
+    this.ctx.restore();
+
+    g = g.children('g');
+    for (var i = 0, l = g.length; i< l; i++) {
+      this.ctx.save();
+
+      g[i] = $(g[i]);
+
+      t = g[i].attr('transform');
+      // fix bug in IE with transforms    
+      t = t.replace(/\) rotate/g,')#rotate')
+        .replace(/ /g,',').replace(/#/, ' ');
+      t = t.split(' ');
+      var t1 = getTransform(t[0]);
+      this.ctx.translate(t1[0], t1[1]);
+      if (t[1]) {
+        var t2 = getTransform(t[1]);
+        this.ctx.scale(t2[0], t2[1]);
+      }
+      u = g[i].children()[0];
+      SVGImage.draw_use.call(this, this.ctx, u);
+      this.ctx.restore();
+    }
+
+    // debugging
+    //this.ctx.canvas.style.border = "1px solid red";
+    //document.body.appendChild(this.ctx.canvas);
+  };
+
+  SVGImage.draw_use = function(ctx, use, trn) {
+    ctx.save();
+
+    if (trn) {
+      ctx.transform(trn.a, trn.b, trn.c, trn.d, trn.e, trn.f);
+    }
+
+    var xlink = use.getAttribute('xlink:href').replace('#','');
+    var img = SVGStorage.defs[xlink];
+    //console.log(img.ox, img.oy)
+    var x = parseInt(use.getAttribute('x'), 10);
+    var y = parseInt(use.getAttribute('y'), 10);
+    var ox = parseInt(img.ox, 10);
+    var oy = parseInt(img.oy, 10);
+
+    ctx.drawImage(img, x + ox, y + oy, img.width, img.height);
+
+    ctx.restore();
+  };
+
+  SVGImage.draw_path = function(ctx, path, trn) {
+    ctx.save();
+
+    if (trn) {
+      ctx.transform(trn.a, trn.b, trn.c, trn.d, trn.e, trn.f);
+    }
+
+    var str_lj = path.getAttribute('stroke-linejoin') || false;
+    var str_lc = path.getAttribute('stroke-linecap') || false;
+    var str_w = parseInt(path.getAttribute('stroke-width'), 10);
+    var str_c = path.getAttribute('stroke');
+    var fill = path.getAttribute('fill'), f;
+
+    if (str_c) {ctx.strokeStyle = str_c;}
+    if (str_w) {ctx.lineWidth = str_w;}
+    if (str_lj) {ctx.lineJoin = str_lj;}
+    if (str_lc) {ctx.lineCap = str_lc;}
+
+    ctx.beginPath();
+
+    var segs = path.pathSegList;
+    for (var i = 0, len = segs.numberOfItems; i < len; i++) {
+      var seg = segs.getItem(i), c = seg.pathSegTypeAsLetter;
+      if (c == "M") {
+        ctx.moveTo(seg.x, seg.y);
+      } else
+      if (c == "L") {
+        ctx.lineTo(seg.x, seg.y);
+      } else
+      if (c == "Q") {
+        //console.log(seg);
+        ctx.quadraticCurveTo(seg.x1, seg.y1, seg.x, seg.y);
+      } else
+      if (c == "A") {
+       //console.log(seg)
+       ctx.arc(seg.x - seg.r1, seg.y, seg.r1, 0, Math.PI * 2, true);
+      } else
+      if (c == "Z") {
+        ctx.closePath();
+      }
+    };
+
+    if (str_c) {ctx.stroke();}
+
+    if (fill && fill != 'none') {
+      if (fill.substring(0,3) == 'url') {
+        fill = fill.replace(/url\(/gm,'');
+        fill = fill.replace(/\)/gm,'');
+        f = this.brd.holder.find(fill);
+        SVGImage["draw_"+ f[0].nodeName.toLowerCase()](ctx, f);
+      } else {
+        ctx.fillStyle = fill;
+        ctx.fill();
+      }
+    }
+
+    ctx.restore();
+  };
+
+  SVGImage.draw_lineargradient = function(ctx, f) {
+    var x1 = parseFloat(f.attr('x1'), 10);
+    var y1 = parseFloat(f.attr('y1'), 10);
+    var x2 = parseFloat(f.attr('x2'), 10);
+    var y2 = parseFloat(f.attr('y2'), 10);
+
+    var trn = (f[0].getAttribute('gradientTransform') || '')
+         .replace('\)','').replace('matrix\(','').split(' ');
+
+    ctx.save();
+
+    if (trn) {
+      ctx.transform(
+        parseFloat(trn[0], 10), parseFloat(trn[1], 10),
+        parseFloat(trn[2], 10), parseFloat(trn[3], 10),
+        parseFloat(trn[4], 10), parseFloat(trn[5], 10)
+      );
+    };
+
+    var grad = ctx.createLinearGradient(x1, y1, x2, y2);
+
+    var s = f.children('stop'), i, l;
+    for (var i = 0, l = s.length; i < l; i++) {
+      grad.addColorStop(
+        parseFloat(s[i].getAttribute('offset'), 10) ,
+        s[i].getAttribute('stop-color-rgba')
+      );
+    };
+
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.restore();
+  };
+
+  SVGImage.draw_radialgradient = function(ctx, f) {
+    var fx = parseFloat(f.attr('fx'), 10);
+    var fy = parseFloat(f.attr('fy'), 10);
+    var cx = parseFloat(f.attr('cx'), 10);
+    var cy = parseFloat(f.attr('cy'), 10);
+    var r = parseFloat(f.attr('r'), 10);
+    var trn = (f[0].getAttribute('gradientTransform') || '')
+         .replace('\)','').replace('matrix\(','').split(' ');
+
+    ctx.save();
+
+    if (trn) {
+      ctx.transform(
+        parseFloat(trn[0], 10), parseFloat(trn[1], 10),
+        parseFloat(trn[2], 10), parseFloat(trn[3], 10),
+        parseFloat(trn[4], 10), parseFloat(trn[5], 10)
+      );
+    };
+
+    var grad = ctx.createRadialGradient(fx, fy, 0, cx, cy, r);
+
+    var s = f.children('stop'), i, l;
+    for (var i = 0, l = s.length; i < l; i++) {
+      grad.addColorStop(
+        parseFloat(s[i].getAttribute('offset'), 10) ,
+        s[i].getAttribute('stop-color-rgba')
+      );
+    };
+
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.restore();
+  };
+
   // holes constructor
+
   var CircuitBoardHole = function(elem) {
     this.name = elem.attr('hole');
     this.x = parseInt(elem.attr("transform").match(/(-?\d+\.\d+)|-?\d+/g)[4], 10);
@@ -326,7 +857,9 @@ window["breadboard"].dmmDialMoved = function(value) {
     this.view.attr("xlink:href", "#$:hole" + pref + "_connected");
     return this;
   };
+
   /* === #equipments begin === */
+
   equipment.multimeter = function(board, params) {
     this.mmbox = new primitive.mmbox(board, params);
     this.probe = {
@@ -363,6 +896,11 @@ window["breadboard"].dmmDialMoved = function(value) {
   };
 
   equipment.battery = function(board, connections) {
+    this.view = SVGStorage.create('group').attr({
+      'component' : 'battery'
+    });
+
+    // main model
     this.btbox = new primitive.btbox(board);
 
     var loc = connections.split(',');
@@ -373,24 +911,25 @@ window["breadboard"].dmmDialMoved = function(value) {
     this.leads = addLeads(this.pts, [300, 45], loc, 'battery', false, board);
 
     // create wires
-    this.wires = [];
-    this.wires[0] = new primitive.batteryWireBlack(this.pts[0]);
-    this.wires[1] = new primitive.batteryWireRed(this.pts[1]);
+    this.wires = [
+      new primitive.battery_wire('black', this.pts[0]),
+      new primitive.battery_wire('red', this.pts[1])
+    ];
 
-    this.blackWire = SVGStorage.create('group').attr({
-      'component' : 'batteryWireBlack'
-    });
+    this.view.append(this.wires[0].view, this.wires[1].view);
+    this.view.append(this.leads[0].view, this.leads[1].view);
 
-    this.redWire = SVGStorage.create('group').attr({
-      'component' : 'batteryWireRed'
-    });
-
-    this.blackWire.append(this.wires[0].view, this.leads[0].view);
-    this.redWire.append(this.wires[1].view, this.leads[1].view);
+    // model for SVGImage
+    this.connector = {"view": this.wires[0].view};
+    this.element = {"view": this.wires[0].view};
+    this.connector.view.path = this.view.children('g:lt(2)').find('path');
 
   };
+
   /* === #equipments end === */
+
   /* === #components begin === */
+
   component.prototype.init = function(params, holes, board) {
     var loc = params["connections"].split(','), self = this;
     this.pts = [holes[loc[0]], holes[loc[1]]];
@@ -455,8 +994,11 @@ window["breadboard"].dmmDialMoved = function(value) {
       }, false);
     }
   };
+
   /* === #components end === */
+
   /* === #primitive begin === */
+
   primitive.prototype.initComponentDraggable = function(board) {
     var component, s_pos, c_pos, x = 0, y = 0, coeff = 25, i, dx, dy;
     var l1, l2, ho1, ho2, hn1, hn2, begDiffX, c, deg, angle;
@@ -578,6 +1120,7 @@ window["breadboard"].dmmDialMoved = function(value) {
       l2.view.attr('transform', 'translate(' + l2.x + ',' + l2.y + ') rotate(' + angle + ',130,130)');
       component.element.view.attr('transform', 'translate(' + c.x + ',' + c.y + ') rotate(' + deg + ',132.5,132.5)');
       setConnectorView(component.connector.view, pts, angle);
+      component.image.update();
     };
 
   };
@@ -623,6 +1166,7 @@ window["breadboard"].dmmDialMoved = function(value) {
         lead_this.isDragged = true;
         // find the nearest hole
         hn = board.holes.find(p1);
+        board.hole_target = hn;
         if (hi) {
           hi.disconnected().highlight();
           hi = null;
@@ -658,6 +1202,10 @@ window["breadboard"].dmmDialMoved = function(value) {
         lead_this = null;
         lead_pair = null;
       }
+      if ($(evt.target).data('component-lead')) {
+        var name = $(evt.target).data('component-lead');
+        board.component[name].image.update();
+      }
     }, false);
 
     var updateComponentView = function() {
@@ -680,7 +1228,9 @@ window["breadboard"].dmmDialMoved = function(value) {
   primitive.lead = function(type, pos, angle, draggable) {
     var lead = SVGStorage.create('lead').clone(), self = this;
     this.view_d = lead.find('[type="disconnected"]').hide();
+    this.view_d.path = this.view_d.find('[type="wire"]>path');
     this.view_c = lead.find('[type="connected"]').show();
+    this.view_c.path = this.view_c.find('[type="wire"]>path');
 
     // name of component
     this.name = pos.name;
@@ -718,6 +1268,7 @@ window["breadboard"].dmmDialMoved = function(value) {
     if (draggable) {
       action.data('primitive-lead', this);
     }
+    action.data('component-lead', this.name);
 
     // bind onclick events
     action[0].addEventListener(_mouseup, function(l) {
@@ -817,6 +1368,7 @@ window["breadboard"].dmmDialMoved = function(value) {
 
   primitive.connector = function(pts, angle, color) {
     var connector = SVGStorage.create('connector').clone();
+    connector.path = connector.find('path');
     angle = getDegsFromRad(angle) + 180;
 
     setConnectorView(connector, [pts[1], pts[0]], angle);
@@ -832,10 +1384,12 @@ window["breadboard"].dmmDialMoved = function(value) {
     var inductor = SVGStorage.create('inductor').clone();
     angle = getDegsFromRad(angle);
 
+    inductor.path = inductor.find('path').not('[type="label-bg"]');
+
     if (angle > 90 || angle < -90) {
       angle += 180;
     }
-    inductor.attr('transform', 'matrix(1 0 0 1 ' + parseInt((pts[0].x + pts[1].x) / 2, 10) + ' ' + parseInt((pts[0].y + pts[1].y) / 2, 10) + ') rotate(' + angle + ',132.5,132.5)');
+    inductor.attr('transform', 'translate(' + parseInt((pts[0].x + pts[1].x) / 2, 10) + ',' + parseInt((pts[0].y + pts[1].y) / 2, 10) + ') rotate(' + angle + ',132.5,132.5)');
 
     var label = inductor.find('[type=label]');
     if (!touch) {
@@ -858,10 +1412,12 @@ window["breadboard"].dmmDialMoved = function(value) {
     var label = capacitor.find('[type=label]');
     angle = getDegsFromRad(angle);
 
+    capacitor.path = capacitor.find('path');
+
     if (angle > 90 || angle < -90) {
       angle += 180;
     }
-    capacitor.attr('transform', 'matrix(1 0 0 1 ' + parseInt((pts[0].x + pts[1].x) / 2, 10) + ' ' + parseInt((pts[0].y + pts[1].y) / 2, 10) + ') rotate(' + angle + ',132.5,132.5)');
+    capacitor.attr('transform', 'translate('+parseInt((pts[0].x + pts[1].x) / 2, 10) + ',' + parseInt((pts[0].y + pts[1].y) / 2, 10) + ') rotate(' + angle + ',132.5,132.5)');
 
     if (!touch) {
       capacitor.bind('mouseover', function() {
@@ -887,10 +1443,14 @@ window["breadboard"].dmmDialMoved = function(value) {
     var band = resistor.find('[type^=band]');
     angle = getDegsFromRad(angle);
 
+    resistor.path = resistor.find('use')
+               .not('[type="label-bg"]')
+                  .not('[type="hint"]');
+
     if (angle > 90 || angle < -90) {
       angle += 180;
     }
-    resistor.attr('transform', 'matrix(1 0 0 1 ' + parseInt((pts[0].x + pts[1].x) / 2, 10) + ' ' + parseInt((pts[0].y + pts[1].y) / 2, 10) + ') rotate(' + angle + ',132.5,132.5)');
+    resistor.attr('transform', 'translate(' + parseInt((pts[0].x + pts[1].x) / 2, 10) + ',' + parseInt((pts[0].y + pts[1].y) / 2, 10) + ') rotate(' + angle + ',132.5,132.5)');
 
     band.each(function(i) {
       if (i != (colors.length - 1)) {
@@ -1038,7 +1598,6 @@ window["breadboard"].dmmDialMoved = function(value) {
       }
     }
 
-    //primitive.prototype.initProbeDraggable(board);
   };
 
   primitive.probe.prototype.setState = function(lead) {
@@ -1245,20 +1804,18 @@ window["breadboard"].dmmDialMoved = function(value) {
     });
   };
 
-  primitive.batteryWireRed = function(point) {
-    var batteryWireRed = SVGStorage.create('batteryWireRed').clone();
-    batteryWireRed.attr('transform', 'matrix(1 0 0 1 ' + point.x + ' ' + point.y + ')');
-    this.view = batteryWireRed;
-  };
-
-  primitive.batteryWireBlack = function(point) {
-    var batteryWireBlack = SVGStorage.create('batteryWireBlack').clone();
-    batteryWireBlack.attr('transform', 'matrix(1 0 0 1 ' + point.x + ' ' + point.y + ')');
-    this.view = batteryWireBlack;
+  primitive.battery_wire = function(name, point) {
+    this.view = SVGStorage.create('battery_wire_' + name).clone();
+    this.view.attr('transform', 'translate('+ point.x +','+ point.y +') rotate(0,0,0)');
   };
 
   /* === #primitive end === */
+
   /* === #utils start === */
+
+  var context2d = function() {
+    return document.createElement('canvas').getContext('2d');
+  }
   var addLeads = function(pts, angle, loc, name, drag, board) {
     var leads = ["right", "left"], angles = [];
     angles = ($.isArray(angle)) ? [angle[0], angle[1]] : [angle, angle];
@@ -1277,12 +1834,12 @@ window["breadboard"].dmmDialMoved = function(value) {
   };
   var setConnectorView = function(elem, pts, deg) {
     // calc transforms
-    var trn = 'matrix(1 0 0 1 ' + parseInt(pts[0].x, 10) + ' ' + parseInt(pts[0].y, 10) + ') rotate(' + deg + ',130,130)';
+    var trn = 'translate(' + parseInt(pts[0].x, 10) + ',' + parseInt(pts[0].y, 10) + ') rotate(' + deg + ',130,130)';
     // calc path
     var leadLenght = 560, coeff = 0.6;
     var dx = pts[0].x - pts[1].x, dy = pts[0].y - pts[1].y;
     var l = Math.sqrt(dx * dx + dy * dy) - leadLenght * 2;
-    var path = 'M 0 0 h ' + l / coeff;
+    var path = 'M 0 0 L ' + l / coeff + ' 0';
     if (l > 0) {
       elem.find('[drag=area]').attr('width', l / coeff);
     }
@@ -1384,18 +1941,71 @@ window["breadboard"].dmmDialMoved = function(value) {
       y : (parseInt(posy, 10) - offset.top)
     };
   };
+  var getTransform = function(trns) {
+    console.log(trns)
+    //var trns = elem.getAttribute('transform');
+    trns = trns.replace(/,/g, ' ');
+    var name = trns.match(/^[^\(]*/)[0];
+    //console.log(name)
+    trns = trns.match(/\([^\)]*\)/)[0];
+    trns = trns.replace(/\(|\)/g, '');
+    //console.log(trns.toString());
+    trns = trns.split(' ');
+    for (var i = trns.length; i--; ) {
+      trns[i] = parseFloat(trns[i], 10);
+    }
+    trns.name = name;
+    return trns;
+  };
   /* === #utils stop === */
 
   var SVGStorage = function(data) {
-    var self = this;
-    this.view = {
-      'board' : data.filter('svg')
-    };
+    var ctxm, ctx1, ctx2, img1, img2, all = 2;
+    var h = "data:image/svg+xml;base64,";
+    var self = this, svg, a, b;
+
+    var t = new Date().getTime();
+    // create all image data resources
+    this.info = {
+      'svghead': data.match(/<svg[^>]*>/)[0] ,
+      'boardhl': new Image(),
+      'svghole': ''
+    }
+    // board with holes
+    a = data.search('<!-- breadboard start -->');
+    b = data.search('<!-- breadboard end -->');
+    svg += data.substring( (a + 25), b);
+    a = data.search('<!-- breadboard defs holes start -->');
+    b = data.search('<!-- breadboard defs holes end -->');
+    svg += data.substring( (a + 36), b);
+    svg = this.info.svghead + svg + '</svg>';
+    this.info.boardhl.src = h + btoa(svg);
+    this.info.svghole = svg;
+
+    // create all jQuery DOM resources
+    data = $(data);
+    this.defs = {};
+    this.view = {'board': data};
     data.find('[primitive]').each(function() {
       var elem = $(this), name = elem.attr('primitive');
       elem.removeAttr('primitive');
       self.view[name] = elem.remove();
     });
+    // add info about holes
+    this.hole = [];
+    data.find('[id="$:hole_highlighted"]').each(function(){
+      var c = $(this).children('circle');
+      for (var i = 0, l = c.length; i < l; i++) {
+        self.hole.push({
+          'x': parseInt(c[i].getAttribute('cx'), 10),
+          'y': parseInt(c[i].getAttribute('cy'), 10),
+          'r': parseInt(c[i].getAttribute('r'), 10),
+          'c': c[i].getAttribute('fill')
+        });
+      }
+    });
+    // set paper value
+    paper = this.view.board;
   };
 
   SVGStorage.prototype.create = function(name) {
@@ -1408,18 +2018,55 @@ window["breadboard"].dmmDialMoved = function(value) {
 
   /* board object */
 
-  // flag, all critical objects built
   var $ready = false;
-  // stack of callback functions
+  // flag, all critical objects built
   var $stack = [];
+  // stack of callback functions
 
-  board.util.require(["sparks.breadboard.svg"], function(data) {
-    paper = $(data["sparks.breadboard"]);
-    SVGStorage = new SVGStorage(paper);
-    $ready = true;
-    for (var i = 0, l = $stack.length; i < l; i++) {
-      $stack[i]();
+  board.util.require(["libs/rgbcolor.js", "libs/base64.js", "libs/canvg.js", "sparks.breadboard.css", "sparks.breadboard.svg"], function(data) {
+    // create base element
+    SVGStorage = new SVGStorage(data["sparks.breadboard"]);
+    // pre-cache all needed images
+    var stack = SVGStorage.view.board.find('image[pre-cache]'), all = stack.length;
+    console.log('try cache '+all+' images');
+    var cache = function(image) {
+      var img = new Image();
+      img.onload = function() {
+        opt = {
+          'id': image.getAttribute('id'),
+          'x': image.getAttribute('x'),
+          'y': image.getAttribute('y')
+        };
+        check(img, opt);
+      };
+      img.src = image.getAttribute('xlink:href');
     }
+    for (var i = 0; i < all; i++) {
+      cache(stack[i]);
+    }
+    var check = function(img, opt) {
+      //console.log(opt.id, img.width, img.height);
+      var ctx = document.createElement('canvas').getContext('2d');
+      //console.log(opt.x, opt.y);
+      ctx.canvas.height = img.height;
+      ctx.canvas.width = img.width;
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+
+      SVGStorage.defs[opt.id] = ctx.canvas;
+      SVGStorage.defs[opt.id].ox = opt.x;
+      SVGStorage.defs[opt.id].oy = opt.y;
+      if (!--all) {start_activity();}
+    }
+
+    // run callbacks, if have been signed 
+    var start_activity = function() {
+      //console.log( SVGStorage.defs );
+      $ready = true;
+      for (var i = 0, l = $stack.length; i < l; i++) {
+        $stack[i]();
+      }
+    }
+
   });
 
   board.create = function(id) {
