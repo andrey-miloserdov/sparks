@@ -10,8 +10,8 @@ window["breadboard"] = {
       "size": 60,
       "zoom": 2,
       "offset": {
-        "x": 40,
-        "y": 40
+        "x": 80,
+        "y": 80
       }
     }
   },
@@ -447,7 +447,7 @@ window["breadboard"].dmmDialMoved = function(value) {
       if (brd.hole_target) {
         ctx.save();
         ctx.fillStyle = "#00ff00";
-        ctx.fillText(brd.hole_target.name, pos.x - r*2 + dx, pos.y - r*2 + dy);
+        ctx.fillText(brd.hole_target.name, pos.x - r - dx, pos.y - r - dy);
         ctx.restore();
       }
       ctx.restore();
