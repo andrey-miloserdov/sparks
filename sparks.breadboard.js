@@ -366,10 +366,8 @@ window["breadboard"].dmmDialMoved = function(value) {
     holder.addEventListener( _mousedown, function(evt) {
       lead = $(evt.target).data('primitive-lead') || null;
       if (lead) {
-        //var t = new Date().getTime();
         elem = brd.component[lead.name];
         comp.update(elem);
-        //console.log(new Date().getTime() - t);
         old = pos = getCoords(evt, brd.holder);
         magnifier.draw();
         active = true;
@@ -461,7 +459,6 @@ window["breadboard"].dmmDialMoved = function(value) {
     comp.update = function(elem) {
       this.clearRect(0, 0, wm, hm);
       for (var i = 0, l = brd.itemslist.length; i < l; i++) {
-        //console.log(brd.itemslist[i].type);
         if (brd.itemslist[i] != elem ) {
           this.drawImage(brd.itemslist[i].image.cnv.canvas, 0, 0, wm, hm);
         }
@@ -495,9 +492,7 @@ window["breadboard"].dmmDialMoved = function(value) {
     // add pattern image of element
     SVGImage[this.comp.type].call(this);
 
-    //var t = new Date().getTime();
     this.update();
-    //console.log(new Date().getTime() - t)
   };
 
   SVGImage.prototype.update = function() {
@@ -686,7 +681,6 @@ window["breadboard"].dmmDialMoved = function(value) {
 
     var xlink = use.getAttribute('xlink:href').replace('#','');
     var img = SVGStorage.defs[xlink];
-    //console.log(img.ox, img.oy)
     var x = parseInt(use.getAttribute('x'), 10);
     var y = parseInt(use.getAttribute('y'), 10);
     var ox = parseInt(img.ox, 10);
@@ -727,11 +721,9 @@ window["breadboard"].dmmDialMoved = function(value) {
         ctx.lineTo(seg.x, seg.y);
       } else
       if (c == "Q") {
-        //console.log(seg);
         ctx.quadraticCurveTo(seg.x1, seg.y1, seg.x, seg.y);
       } else
       if (c == "A") {
-       //console.log(seg)
        ctx.arc(seg.x - seg.r1, seg.y, seg.r1, 0, Math.PI * 2, true);
       } else
       if (c == "Z") {
@@ -1942,14 +1934,10 @@ window["breadboard"].dmmDialMoved = function(value) {
     };
   };
   var getTransform = function(trns) {
-    console.log(trns)
-    //var trns = elem.getAttribute('transform');
     trns = trns.replace(/,/g, ' ');
     var name = trns.match(/^[^\(]*/)[0];
-    //console.log(name)
     trns = trns.match(/\([^\)]*\)/)[0];
     trns = trns.replace(/\(|\)/g, '');
-    //console.log(trns.toString());
     trns = trns.split(' ');
     for (var i = trns.length; i--; ) {
       trns[i] = parseFloat(trns[i], 10);
@@ -2028,7 +2016,7 @@ window["breadboard"].dmmDialMoved = function(value) {
     SVGStorage = new SVGStorage(data["sparks.breadboard"]);
     // pre-cache all needed images
     var stack = SVGStorage.view.board.find('image[pre-cache]'), all = stack.length;
-    console.log('try cache '+all+' images');
+    // console.log('try cache '+all+' images');
     var cache = function(image) {
       var img = new Image();
       img.onload = function() {
@@ -2045,9 +2033,7 @@ window["breadboard"].dmmDialMoved = function(value) {
       cache(stack[i]);
     }
     var check = function(img, opt) {
-      //console.log(opt.id, img.width, img.height);
       var ctx = document.createElement('canvas').getContext('2d');
-      //console.log(opt.x, opt.y);
       ctx.canvas.height = img.height;
       ctx.canvas.width = img.width;
       ctx.drawImage(img, 0, 0, img.width, img.height);
@@ -2060,7 +2046,6 @@ window["breadboard"].dmmDialMoved = function(value) {
 
     // run callbacks, if have been signed 
     var start_activity = function() {
-      //console.log( SVGStorage.defs );
       $ready = true;
       for (var i = 0, l = $stack.length; i < l; i++) {
         $stack[i]();
