@@ -383,6 +383,7 @@ window["breadboard"].dmmDialMoved = function(value) {
     holder.addEventListener( _mousemove, function(evt) {
       pos = getCoords(evt, brd.holder);
       if (active && ((pos.x != old.x) || (pos.y != old.y))) {
+        magnifier.show();
         magnifier.draw();
         old = pos;
       }
