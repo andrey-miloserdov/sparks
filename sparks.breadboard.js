@@ -1496,67 +1496,75 @@ window["breadboard"].dmmDialMoved = function(value) {
 
     board.holder.find('[info=probe]').each(function() {
       this.addEventListener(_mousedown, function(evt) {
-        active = $(this).data('primitive-probe') || {};
-        if (active.draggable) {
-          s_pos = getCoords(evt, board.holder);
-          calcLeadsBBox.call(board);
-          lead_init = active.lead;
-          evt.stopPropagation();
-          evt.preventDefault();
-          // hack to avoid errors if mousedown+mouseup-mousemove
-          x = active.dx;
-          y = active.dy;
-          dx = dy = 0;
-        } else {
-          active = null;
+        if (!evt.touches || evt.touches.length == 1) {
+          active = $(this).data('primitive-probe') || {};
+          if (active.draggable) {
+            active.z.attr('transform', active.z.zoom);
+            s_pos = getCoords(evt, board.holder);
+            calcLeadsBBox.call(board);
+            lead_init = active.lead;
+            evt.stopPropagation();
+            evt.preventDefault();
+            // hack to avoid errors if mousedown+mouseup-mousemove
+            x = active.dx;
+            y = active.dy;
+            dx = dy = 0;
+          } else {
+            active = null;
+          }
         }
       }, false);
     });
 
     board.holder[0].addEventListener(_mousemove, function(evt) {
-      if (active) {
-        c_pos = getCoords(evt, board.holder);
-        dx = c_pos.x - s_pos.x;
-        dy = c_pos.y - s_pos.y;
-        //coord for view translations
-        x = active.dx + dx * coeff;
-        y = active.dy + dy * coeff;
-        active.view.attr('transform', 'translate(' + x + ',' + y + ')');
-        //coord for real probe coords
-        point = {
-          'x' : (active.x + dx),
-          'y' : (active.y + dy)
-        };
-        lead_new = findLeadUnderProbe(board, point);
-        if (lead_init) {
-          board.sendEventToModel("probeRemoved", [active.name, active.color]);
-          lead_init = null;
-        }
-        if (lead_new) {
-          lead_new.highlight(1);
-          lead_old = lead_new;
-          //active.lead = lead_new;
-        } else {
-          if (lead_old) {
-            lead_old.highlight(0);
-            lead_old = null;
+      if (!evt.touches || evt.touches.length == 1) {
+        if (active) {
+          c_pos = getCoords(evt, board.holder);
+          dx = c_pos.x - s_pos.x;
+          dy = c_pos.y - s_pos.y;
+          //coord for view translations
+          x = active.dx + dx * coeff;
+          y = active.dy + dy * coeff;
+          active.view.attr('transform', 'translate(' + x + ',' + y + ')');
+          //coord for real probe coords
+          point = {
+            'x' : (active.x + dx),
+            'y' : (active.y + dy)
+          };
+          lead_new = findLeadUnderProbe(board, point);
+          if (lead_init) {
+            board.sendEventToModel("probeRemoved", [active.name, active.color]);
+            lead_init = null;
+          }
+          if (lead_new) {
+            lead_new.highlight(1);
+            lead_old = lead_new;
+            //active.lead = lead_new;
+          } else {
+            if (lead_old) {
+              lead_old.highlight(0);
+              lead_old = null;
+            }
           }
         }
       }
     }, false);
 
     board.holder[0].addEventListener(_mouseup, function(evt) {
-      if (active) {
-        active.x += dx;
-        active.y += dy;
-        active.dx = x;
-        active.dy = y;
-        if (lead_new) {
-          active.setState(lead_new);
-        } else if (active.lead) {
-          active.lead = null;
+      if (!evt.touches || evt.touches.length === 0) {
+        if (active) {
+          active.z.attr('transform', active.z.init);
+          active.x += dx;
+          active.y += dy;
+          active.dx = x;
+          active.dy = y;
+          if (lead_new) {
+            active.setState(lead_new);
+          } else if (active.lead) {
+            active.lead = null;
+          }
+          active = null;
         }
-        active = null;
       }
     }, false);
   };
@@ -1573,6 +1581,10 @@ window["breadboard"].dmmDialMoved = function(value) {
     if (params.connection) {// move to this position
       initial.attr('transform', 'translate(' + (board.holes[params.connection].x / coeff) + ',' + (board.holes[params.connection].y / coeff) + ')');
     }
+
+    this.z = elem.find('[type="zooming"]');
+    this.z.zoom = this.z.attr('transform-zoomed');
+    this.z.init = this.z.attr('transform');
 
     // make object
     point = getAttractionPoint(elem);
