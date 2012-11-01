@@ -369,39 +369,45 @@ window["breadboard"].dmmDialMoved = function(value) {
     // set default style for canvas context2d object
 
     holder.addEventListener( _mousedown, function(evt) {
-      lead = $(evt.target).data('primitive-lead') || null;
-      if (lead) {
-        elem = brd.component[lead.name];
-        comp.update(elem);
-        old = pos = getCoords(evt, brd.holder);
-        magnifier.draw();
-        active = true;
-        show_magnifier = true;
-        setTimeout(function() {
-          if (show_magnifier) {
-            magnifier.show();
-          }
-        }, time);
+      if (!evt.touches || evt.touches.length == 1) {
+        lead = $(evt.target).data('primitive-lead') || null;
+        if (lead) {
+          elem = brd.component[lead.name];
+          comp.update(elem);
+          old = pos = getCoords(evt, brd.holder);
+          magnifier.draw();
+          active = true;
+          show_magnifier = true;
+          setTimeout(function() {
+            if (show_magnifier) {
+              magnifier.show();
+            }
+          }, time);
+        }
       }
       evt.preventDefault();
     }, false);
 
     holder.addEventListener( _mousemove, function(evt) {
-      pos = getCoords(evt, brd.holder);
-      if (active && ((pos.x != old.x) || (pos.y != old.y))) {
-        magnifier.show();
-        magnifier.draw();
-        old = pos;
+      if (!evt.touches || evt.touches.length == 1) {
+        pos = getCoords(evt, brd.holder);
+        if (active && ((pos.x != old.x) || (pos.y != old.y))) {
+          magnifier.show();
+          magnifier.draw();
+          old = pos;
+        }
       }
     }, false);
 
-    holder.addEventListener( _mouseup, function(evt) {
-      if (active) {
-        show_magnifier = false;
-        magnifier.hide();
-        active = false;
-        lead = null;
-        elem = null;
+    $('body')[0].addEventListener( _mouseup, function(evt) {
+      if (!evt.touches || evt.touches.length === 0) {
+        if (active) {
+          show_magnifier = false;
+          magnifier.hide();
+          active = false;
+          lead = null;
+          elem = null;
+        }
       }
     }, false);
 
@@ -1187,7 +1193,7 @@ window["breadboard"].dmmDialMoved = function(value) {
       }
     }, false);
 
-    board.holder[0].addEventListener(_mouseup, function(evt) {
+    $('body')[0].addEventListener(_mouseup, function(evt) {
       if (!evt.touches || evt.touches.length === 0) {
         if (component) {
           // snap to nearest holes
@@ -1301,7 +1307,7 @@ window["breadboard"].dmmDialMoved = function(value) {
       }
     }, false);
 
-    board.holder[0].addEventListener(_mouseup, function(evt) {
+    $('body')[0].addEventListener(_mouseup, function(evt) {
       if (!evt.touches || evt.touches.length === 0) {
         if (lead_this) {
           lead_this.isDragged = false;
