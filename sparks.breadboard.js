@@ -1618,6 +1618,9 @@ window["breadboard"].dmmDialMoved = function(value) {
   primitive.prototype.initProbeDraggable = function(board) {
     var active, lead_new, lead_old, lead_init, point;
     var s_pos, c_pos, x, y, dx, dy, coeff = 20;
+    var tlrn = 40, xmin = tlrn, ymin = tlrn;
+    var ymax = board.holder.height() - tlrn;
+    var xmax = board.holder.width() - tlrn;
 
     board.holder.find('[info=probe]').each(function() {
       this.addEventListener(_mousedown, function(evt) {
@@ -1645,30 +1648,32 @@ window["breadboard"].dmmDialMoved = function(value) {
       if (!evt.touches || evt.touches.length == 1) {
         if (active) {
           c_pos = getCoords(evt, board.holder);
-          dx = c_pos.x - s_pos.x;
-          dy = c_pos.y - s_pos.y;
-          //coord for view translations
-          x = active.dx + dx * coeff;
-          y = active.dy + dy * coeff;
-          active.view.attr('transform', 'translate(' + x + ',' + y + ')');
-          //coord for real probe coords
-          point = {
-            'x' : (active.x + dx),
-            'y' : (active.y + dy)
-          };
-          lead_new = findLeadUnderProbe(board, point);
-          if (lead_init) {
-            board.sendEventToModel("probeRemoved", [active.name, active.color]);
-            lead_init = null;
-          }
-          if (lead_new) {
-            lead_new.highlight(1);
-            lead_old = lead_new;
-            //active.lead = lead_new;
-          } else {
-            if (lead_old) {
-              lead_old.highlight(0);
-              lead_old = null;
+          if ( c_pos.x >= xmin && c_pos.x <= xmax && c_pos.y >= ymin && c_pos.y <= ymax ) {
+            dx = c_pos.x - s_pos.x;
+            dy = c_pos.y - s_pos.y;
+            //coord for view translations
+            x = active.dx + dx * coeff;
+            y = active.dy + dy * coeff;
+            active.view.attr('transform', 'translate(' + x + ',' + y + ')');
+            //coord for real probe coords
+            point = {
+              'x' : (active.x + dx),
+              'y' : (active.y + dy)
+            };
+            lead_new = findLeadUnderProbe(board, point);
+            if (lead_init) {
+              board.sendEventToModel("probeRemoved", [active.name, active.color]);
+              lead_init = null;
+            }
+            if (lead_new) {
+              lead_new.highlight(1);
+              lead_old = lead_new;
+              //active.lead = lead_new;
+            } else {
+              if (lead_old) {
+                lead_old.highlight(0);
+                lead_old = null;
+              }
             }
           }
         }
