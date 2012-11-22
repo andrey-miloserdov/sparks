@@ -19,23 +19,23 @@ window["breadboard"] = {
 };
 
 window["breadboard"].connectionMade = function(component, location) {
-  console.log('Received: connect, component|' + component + '|' + location);
+  //console.log('Received: connect, component|' + component + '|' + location);
 };
 
 window["breadboard"].connectionBroken = function(component, location) {
-  console.log('Received: disconnect, component|' + component + '|' + location);
+  //console.log('Received: disconnect, component|' + component + '|' + location);
 };
 
 window["breadboard"].probeAdded = function(meter, color, location) {
-  console.log('Received: connect, ' + meter + '|probe|' + color + '|' + location);
+  //console.log('Received: connect, ' + meter + '|probe|' + color + '|' + location);
 };
 
 window["breadboard"].probeRemoved = function(meter, color) {
-  console.log('Received: disconnect, ' + meter + '|probe|' + color);
+  //console.log('Received: disconnect, ' + meter + '|probe|' + color);
 };
 
 window["breadboard"].dmmDialMoved = function(value) {
-  console.log('Received: multimeter_dial >> ' + value);
+  //console.log('Received: multimeter_dial >> ' + value);
 };
 
 /**
@@ -365,6 +365,9 @@ window["breadboard"].dmmDialMoved = function(value) {
     buff.drawSvg( SVGStorage.info.svghole, 0, 0, wm, hm );
     buff.fill();
     //window.document.body.appendChild(ctx.canvas);
+    var tlrn = 40, xmin = tlrn, ymin = tlrn;
+    var ymax = brd.holder.h - tlrn;
+    var xmax = brd.holder.w - tlrn;
 
     // set default style for canvas context2d object
 
@@ -392,9 +395,11 @@ window["breadboard"].dmmDialMoved = function(value) {
       if (!evt.touches || evt.touches.length == 1) {
         pos = getCoords(evt, brd.holder);
         if (active && ((pos.x != old.x) || (pos.y != old.y))) {
-          magnifier.show();
-          magnifier.draw();
-          old = pos;
+          if ( pos.x >= xmin && pos.x <= xmax && pos.y >= ymin && pos.y <= ymax ) {
+            magnifier.show();
+            magnifier.draw();
+            old = pos;
+          }
         }
       }
     }, false);
@@ -1118,6 +1123,9 @@ window["breadboard"].dmmDialMoved = function(value) {
   primitive.prototype.initComponentDraggable = function(board) {
     var component, s_pos, c_pos, x = 0, y = 0, coeff = 25, dx, dy;
     var l1, l2, ho1, ho2, hn1, hn2, c, deg, angle;
+    var tlrn = 40, xmin = tlrn, ymin = tlrn;
+    var ymax = board.holder.h - tlrn;
+    var xmax = board.holder.w - tlrn;
     var hi1, hi2;
     var p1 = {
       x : 0,
@@ -1156,38 +1164,40 @@ window["breadboard"].dmmDialMoved = function(value) {
       if (!evt.touches || evt.touches.length == 1) {
         if (component) {
           c_pos = getCoords(evt, board.holder);
-          dx = c_pos.x - s_pos.x;
-          dy = c_pos.y - s_pos.y;
-          x = component.x + dx * coeff;
-          y = component.y + dy * coeff;
-          // update view of component
-          component.view.attr('transform', 'translate(' + x + ',' + y + ')');
-          // highlight nearest holes
-          p1.x = l1.x + dx * coeff;
-          p1.y = l1.y + dy * coeff;
-          p2.x = l2.x + dx * coeff;
-          p2.y = l2.y + dy * coeff;
-          hn1 = board.holes.find(p1);
-          hn2 = board.holes.find(p2);
-          if (hi1 || hi2) {
-            hi1.disconnected().highlight();
-            hi2.disconnected().highlight();
-            hi1 = hi2 = null;
-            // sent event to model
-            if (l1.state != l1.view_d) {
-              l1.board.sendEventToModel("connectionBroken", [l1.name, l1.hole]);
+          if ( c_pos.x >= xmin && c_pos.x <= xmax && c_pos.y >= ymin && c_pos.y <= ymax ) {
+            dx = c_pos.x - s_pos.x;
+            dy = c_pos.y - s_pos.y;
+            x = component.x + dx * coeff;
+            y = component.y + dy * coeff;
+            // update view of component
+            component.view.attr('transform', 'translate(' + x + ',' + y + ')');
+            // highlight nearest holes
+            p1.x = l1.x + dx * coeff;
+            p1.y = l1.y + dy * coeff;
+            p2.x = l2.x + dx * coeff;
+            p2.y = l2.y + dy * coeff;
+            hn1 = board.holes.find(p1);
+            hn2 = board.holes.find(p2);
+            if (hi1 || hi2) {
+              hi1.disconnected().highlight();
+              hi2.disconnected().highlight();
+              hi1 = hi2 = null;
+              // sent event to model
+              if (l1.state != l1.view_d) {
+                l1.board.sendEventToModel("connectionBroken", [l1.name, l1.hole]);
+              }
+              if (l2.state != l2.view_d) {
+                l2.board.sendEventToModel("connectionBroken", [l2.name, l2.hole]);
+              }
             }
-            if (l2.state != l2.view_d) {
-              l2.board.sendEventToModel("connectionBroken", [l2.name, l2.hole]);
+            if (hn1 != ho1) {
+              ho1.unhighlight();
+              ho1 = hn1.highlight();
             }
-          }
-          if (hn1 != ho1) {
-            ho1.unhighlight();
-            ho1 = hn1.highlight();
-          }
-          if (hn2 != ho2) {
-            ho2.unhighlight();
-            ho2 = hn2.highlight();
+            if (hn2 != ho2) {
+              ho2.unhighlight();
+              ho2 = hn2.highlight();
+            }
           }
         }
       }
@@ -1250,6 +1260,10 @@ window["breadboard"].dmmDialMoved = function(value) {
     var lead_this, lead_pair, component, coeff = 25;
     // coeff = 1 / (0.05*0.8)
     var s_pos, c_pos, dx, dy, pts, angle, c;
+    var tlrn = 40, xmin = tlrn, ymin = tlrn;
+    var ymax = board.holder.h - tlrn;
+    var xmax = board.holder.w - tlrn;
+
     var p1 = {
       x : 0,
       y : 0
@@ -1280,28 +1294,30 @@ window["breadboard"].dmmDialMoved = function(value) {
         if (lead_this) {
           // calc move params
           c_pos = getCoords(evt, board.holder);
-          dx = c_pos.x - s_pos.x;
-          dy = c_pos.y - s_pos.y;
-          p1.x = lead_this.x + dx * coeff;
-          p1.y = lead_this.y + dy * coeff;
-          // update view of component
-          updateComponentView();
-          // update flag for hover events
-          lead_this.isDragged = true;
-          // find the nearest hole
-          hn = board.holes.find(p1);
-          board.hole_target = hn;
-          if (hi) {
-            hi.disconnected().highlight();
-            hi = null;
-            // sent event to model
-            if (lead_this.state != lead_this.view_d) {
-              lead_this.board.sendEventToModel("connectionBroken", [lead_this.name, lead_this.hole]);
+          if ( c_pos.x >= xmin && c_pos.x <= xmax && c_pos.y >= ymin && c_pos.y <= ymax ) {
+            dx = c_pos.x - s_pos.x;
+            dy = c_pos.y - s_pos.y;
+            p1.x = lead_this.x + dx * coeff;
+            p1.y = lead_this.y + dy * coeff;
+            // update view of component
+            updateComponentView();
+            // update flag for hover events
+            lead_this.isDragged = true;
+            // find the nearest hole
+            hn = board.holes.find(p1);
+            board.hole_target = hn;
+            if (hi) {
+              hi.disconnected().highlight();
+              hi = null;
+              // sent event to model
+              if (lead_this.state != lead_this.view_d) {
+                lead_this.board.sendEventToModel("connectionBroken", [lead_this.name, lead_this.hole]);
+              }
             }
-          }
-          if (hn != ho) {
-            ho.unhighlight();
-            ho = hn.highlight();
+            if (hn != ho) {
+              ho.unhighlight();
+              ho = hn.highlight();
+            }
           }
         }
       }
@@ -1619,8 +1635,8 @@ window["breadboard"].dmmDialMoved = function(value) {
     var active, lead_new, lead_old, lead_init, point;
     var s_pos, c_pos, x, y, dx, dy, coeff = 20;
     var tlrn = 40, xmin = tlrn, ymin = tlrn;
-    var ymax = board.holder.height() - tlrn;
-    var xmax = board.holder.width() - tlrn;
+    var ymax = board.holder.h - tlrn;
+    var xmax = board.holder.w - tlrn;
 
     board.holder.find('[info=probe]').each(function() {
       this.addEventListener(_mousedown, function(evt) {
